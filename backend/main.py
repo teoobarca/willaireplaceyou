@@ -2,6 +2,7 @@ import asyncio
 import json
 from typing import List, Dict, Any, Union, Literal
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 import uvicorn
 from langchain_openai import ChatOpenAI
@@ -19,6 +20,14 @@ from prompts import (
 load_dotenv()
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class UserProfile(BaseModel):
     age: str
