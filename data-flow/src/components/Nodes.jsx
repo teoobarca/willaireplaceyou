@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { User, Brain, Calculator, FileText, Activity, CheckCircle, AlertCircle } from 'lucide-react';
+import { User, Calculator, FileText, Activity, CheckCircle, AlertCircle } from 'lucide-react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -74,35 +74,42 @@ export const DecompositionNode = ({ title, items, type = "tasks" }) => (
     </NodeContainer>
 );
 
-export const AgentNode = ({ taskName, status = "analyzing", score }) => (
-    <NodeContainer className="w-64 border-acid-green/30" delay={0.4}>
-        <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 rounded-full bg-acid-green/10 text-acid-green relative">
-                <Brain size={20} />
+export const AgentNode = ({ taskName, status = "analyzing", score, compact = false }) => {
+    const scorePercent = (score * 100).toFixed(0);
+    
+    return (
+        <NodeContainer className={compact ? "w-[150px] p-2 border-acid-green/30" : "w-48 border-acid-green/30"} delay={0.4}>
+            <div className="flex items-center gap-2 mb-1">
                 {status === "analyzing" && (
-                    <span className="absolute top-0 right-0 w-2 h-2 bg-acid-green rounded-full animate-ping" />
+                    <span className="w-1.5 h-1.5 bg-acid-green rounded-full animate-ping" />
                 )}
+                <h3 className="font-mono text-[10px] font-bold text-acid-green">AI AGENT</h3>
             </div>
-            <h3 className="font-mono text-sm font-bold text-acid-green">AI AGENT</h3>
-        </div>
-        <div className="text-xs text-gray-300 font-mono mb-2">
-            Analyzing: <span className="text-white block truncate">{taskName}</span>
-        </div>
-        <div className="h-1 w-full bg-gray-800 rounded-full overflow-hidden mb-2">
-            <motion.div
-                className="h-full bg-acid-green"
-                initial={{ width: "0%" }}
-                animate={{ width: status === "complete" ? "100%" : "60%" }}
-                transition={{ duration: 1, repeat: status === "analyzing" ? Infinity : 0 }}
-            />
-        </div>
-        {status === "complete" && (
-            <div className="text-right text-xs font-bold text-acid-green">
-                Score: {(score * 100).toFixed(0)}%
+            {!compact && (
+                <div className="text-[10px] text-gray-300 font-mono mb-2">
+                    Analyzing: <span className="text-white block truncate">{taskName}</span>
+                </div>
+            )}
+            <div className="h-1 w-full bg-gray-800 rounded-full overflow-hidden mb-1">
+                <motion.div
+                    className="h-full bg-acid-green"
+                    initial={{ width: "0%" }}
+                    animate={{ width: `${scorePercent}%` }}
+                    transition={{ 
+                        duration: 1.5,
+                        ease: "easeOut"
+                    }}
+                />
             </div>
-        )}
-    </NodeContainer>
-);
+            <div className="flex justify-between items-center">
+                 <span className="text-[9px] text-gray-400 truncate max-w-[60px]" title={taskName}>{taskName}</span>
+                 <div className="text-right text-[9px] font-bold text-acid-green">
+                    {scorePercent}%
+                 </div>
+            </div>
+        </NodeContainer>
+    );
+};
 
 export const ScoringNode = ({ taskScore, skillScore, finalScore }) => (
     <NodeContainer className="w-64 border-white/50 text-center" delay={0.6}>
