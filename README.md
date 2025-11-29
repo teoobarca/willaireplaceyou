@@ -1,97 +1,69 @@
-# 🚀 STVOREC-02: FUTURE PROOF YOUR CAREER 🚀
+# STVOREC-02
 
 ![Banner](assets/banner.png)
 
-> **"The best time to prepare for the AI revolution was yesterday. The second best time is now."**
+## Prečo sme to spravili?
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![Next.js](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org/)
-[![Status](https://img.shields.io/badge/Status-POPICI-red)](https://github.com/)
-[![Hackathon](https://img.shields.io/badge/Hackathon-WINNER-gold)](https://github.com/)
+Úprimne? Báli sme sa.
 
-## 🧐 O ČO IDE? (About)
+Každý deň čítame o tom, ako AI nahradí programátorov, grafikov, copywriterov... nás. Namiesto paniky sme sa rozhodli pozrieť pravde do očí. Potrebovali sme nástroj, ktorý nám nedá len prázdne sľuby, ale tvrdé dáta.
 
-**STVOREC-02** nie je len ďalšia nudná appka. Je to tvoj osobný **AI Career Survival Kit**.
-
-V svete, kde sa každý bojí, že mu AI zoberie robotu, my ti dávame do rúk **dáta**. Žiadne pocity, žiadne "možno". Čistá, tvrdá analytika tvojej budúcnosti.
-
-Zistíš:
-1.  Či tvoj job prežije rok 2030.
-2.  Ktoré tvoje skills sú na odpis.
-3.  Kam máš okamžite pivotovať, aby si neskončil pod mostom.
+**STVOREC-02** je výsledok našej paranoje a zvedavosti. Je to analytický nástroj, ktorý ti povie, či tvoja kariéra prežije rok 2030, a ak nie, čo s tým máš robiť.
 
 ---
 
-## 🔥 FEATURES (Popičovky)
+## Čo to vlastne robí?
 
-### 🧠 **Deep Job Decomposition**
-Rozoberieme tvoju prácu na atómy. Každý task, každý skill. Nič sa pred nami neschová.
+Neveštíme z gule. Používame **GPT-5.1** a komplexné analytické reťazce na to, aby sme pochopili podstatu tvojej práce.
 
-### 🤖 **AI Automation Score**
-Naša AI (poháňaná `gpt-5.1` enginom) vypočíta presné percento, na koľko je tvoja pozícia automatizovateľná.
-*Spoiler: Je to viac, ako si myslíš.*
+### 1. Rozklad na súčiastky
+Tvoju prácu nerozumieme ako "názov pozície". Rozoberieme ju na stovky mikro-taskov a skillov. Vidíme to, čo ty možno prehliadaš.
 
-### 🔮 **Future Scenarios 2030**
-Generujeme 3 možné scenáre tvojej budúcnosti. Od "Utopia" po "Total Doom". Buď pripravený na všetko.
+### 2. Realistické skóre automatizácie
+Žiadne "50% šanca". Ideme do hĺbky. Pre každý jeden task vypočítame pravdepodobnosť, že ho AI zvládne lepšie a lacnejšie ako ty. Výsledok? Číslo, ktoré možno zabolí, ale otvorí ti oči.
 
-### 🚀 **Smart Career Pivot**
-Neplač nad rozliatym mliekom. Ukážeme ti, kde tvoje skills využiješ najlepšie a čo sa musíš doučiť, aby si bol **nenahraditeľný**.
+### 3. Plán B (a C, a D...)
+Ak ti vyjde, že si nahraditeľný, nenecháme ťa v tom. Systém ti nájde príbuzné kariérne cesty, kde využiješ to, čo už vieš, ale v kontexte, ktorý AI (zatiaľ) nedokáže replikovať.
 
 ---
 
-## 🛠 TECH STACK (Pod kapotou)
+## Ako to funguje pod kapotou?
 
-Tento projekt beží na steroidoch:
+Sme vývojári, takže vieme, že "AI magic" nestačí. Tu je to, na čom to reálne beží:
 
-*   **Frontend**:
-    *   ⚡ **Next.js 16** (Rýchlosť svetla)
-    *   🎨 **Tailwind CSS 4** (Dizajn z budúcnosti)
-    *   ✨ **Framer Motion** (Animácie, z ktorých odpadneš)
-    *   🧊 **OGL** (WebGL mágia)
-*   **Backend**:
-    *   🐍 **Python & FastAPI** (Výkon a flexibilita)
-    *   🔗 **LangChain** (Orchestrácia AI agentov)
-    *   🧠 **OpenAI GPT-5.1** (Mozog operácie)
+*   **Backend**: Python + FastAPI. Rýchle, typované, stabilné.
+*   **AI Orchestrácia**: LangChain. Nie je to len jeden prompt. Je to sústava agentov, ktorí sa navzájom kontrolujú a dopĺňajú.
+*   **Frontend**: Next.js 16 + Tailwind 4. Chceli sme, aby to nielen fungovalo, ale aby sa na to aj dobre pozeralo. Žiadne zbytočné loadery, všetko realtime streamované.
 
 ---
 
-## 🚀 AKO TO SPUSTIŤ (How to run)
+## Spusti si to u seba
 
-Chceš to vidieť na vlastné oči? Poďme na to.
+Ak si chceš overiť, či nekecáme, kľudne si to buildni.
 
-### 1. Backend (Mozog)
+**Backend:**
 ```bash
 cd backend
-# Nainštaluj závislosti (používame Poetry, lebo sme profíci)
 poetry install
-# Spusti server
 poetry run python main.py
 ```
-Server pobeží na `http://localhost:8000`.
 
-### 2. Frontend (Tvár)
+**Frontend:**
 ```bash
 cd frontend
-# Nainštaluj balíčky
 npm install
-# Odpáľ to
 npm run dev
 ```
-Otvor `http://localhost:3000` a pozeraj sa na tú nádheru.
 
 ---
 
-## 👥 TÍM (The Legends)
+## Kto za tým stojí?
 
-Tento projekt vznikol počas bezsenných nocí na Hackathone 2025.
+Sme partia kamošov, ktorí nechceli stráviť víkend spaním.
 
-*   **[Doplň Meno]** - *Frontend Wizard*
-*   **[Doplň Meno]** - *Backend Architect*
-*   **[Doplň Meno]** - *AI Whisperer*
-*   **[Doplň Meno]** - *Design Guru*
+*   **[Meno]** - Frontend & Design
+*   **[Meno]** - Backend & AI Logic
+*   **[Meno]** - Data & Prompts
+*   **[Meno]** - Idea & Panic Management
 
----
-
-Made with ❤️ and ☕ by **STVOREC-02 Team**.
-*P.S. Dajte nám hlas, lebo vieme, kde bývate. (Just kidding... or are we?)* 😉
+Dúfame, že vám to pomôže tak, ako to pomohlo nám (upokojiť sa, že ešte pár rokov máme prácu). Peace. ✌️
