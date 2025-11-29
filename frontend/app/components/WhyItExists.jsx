@@ -19,114 +19,114 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 
 // ============ WHY IT EXISTS ============
- function WhyItExists() {
-   return (
-     <section
-       id="about"
-       className="scroll-mt-[20px] py-24 md:py-40 relative overflow-hidden"
-     >
-       {/* Background gradients */}
+function WhyItExists() {
+  return (
+    <section
+      id="about"
+      className="scroll-mt-[20px] py-24 md:py-40 relative overflow-hidden"
+    >
+      {/* Background gradients */}
 
-       <div className="container mx-auto px-4 relative z-10">
-         <div className="max-w-4xl mx-auto mb-20 md:mb-32">
-           <motion.div
-             initial={{ opacity: 0, y: 20 }}
-             whileInView={{ opacity: 1, y: 0 }}
-             viewport={{ once: true }}
-             transition={{ duration: 0.6 }}
-             className="mb-6 flex items-center gap-3 justify-center"
-           >
-             <div className="h-px w-8 bg-gradient-to-r from-transparent to-purple-400" />
-             <span className="text-sm uppercase tracking-widest text-white">
-               Why we exist
-             </span>
-             <div className="h-px w-8 bg-gradient-to-l from-transparent to-purple-400" />
-           </motion.div>
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="max-w-4xl mx-auto mb-20 md:mb-32">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="mb-6 flex items-center gap-3 justify-center"
+          >
+            <div className="h-px w-8 bg-gradient-to-r from-transparent to-purple-400" />
+            <span className="text-sm uppercase tracking-widest text-white">
+              Why we exist
+            </span>
+            <div className="h-px w-8 bg-gradient-to-l from-transparent to-purple-400" />
+          </motion.div>
 
-           <motion.h2
-             initial={{ opacity: 0, y: 20 }}
-             whileInView={{ opacity: 1, y: 0 }}
-             viewport={{ once: true }}
-             transition={{ duration: 0.6, delay: 0.1 }}
-             className="text-5xl md:text-7xl font-bold mb-8  text-center tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60"
-           >
-             The future demands preparation, not panic
-           </motion.h2>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="text-5xl md:text-7xl font-bold mb-8  text-center tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60"
+          >
+            The future demands preparation, not panic
+          </motion.h2>
 
-           <motion.p
-             initial={{ opacity: 0, y: 20 }}
-             whileInView={{ opacity: 1, y: 0 }}
-             viewport={{ once: true }}
-             transition={{ duration: 0.6, delay: 0.2 }}
-             className="text-lg text-zinc-400 text-center max-w-2xl mx-auto leading-relaxed"
-           >
-             Job markets shift in months. Skills become obsolete. But
-             opportunities emerge for those prepared. We help you navigate this
-             transition with clarity and strategy.
-           </motion.p>
-         </div>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-lg text-zinc-400 text-center max-w-2xl mx-auto leading-relaxed"
+          >
+            Job markets shift in months. Skills become obsolete. But
+            opportunities emerge for those prepared. We help you navigate this
+            transition with clarity and strategy.
+          </motion.p>
+        </div>
 
-         <div className="grid md:grid-cols-3 gap-8 md:gap-6 max-w-5xl mx-auto mb-24">
-           {[
-             {
-               stat: "73%",
-               description: "of jobs will change by 2030",
-               icon: TrendingUp,
-               accent: "from-blue-500 to-cyan-500",
-             },
-             {
-               stat: "4.3M",
-               description: "new roles emerging in AI/tech sectors",
-               icon: Sparkles,
-               accent: "from-blue-400 to-purple-500",
-             },
-             {
-               stat: "Now",
-               description: "is the time to upskill for tomorrow",
-               icon: Zap,
-               accent: "from-blue-500 to-green-500",
-             },
-           ].map((item, index) => {
-             const Icon = item.icon;
-             return (
-               <motion.div
-                 key={index}
-                 initial={{ opacity: 0, y: 30 }}
-                 whileInView={{ opacity: 1, y: 0 }}
-                 viewport={{ once: true }}
-                 transition={{ duration: 0.5, delay: 0.1 + index * 0.1 }}
-                 className="group relative"
-               >
-                 <div className="relative overflow-hidden rounded-2xl border border-white/10 backdrop-blur-sm p-8 hover:border-white/20 transition-all duration-300">
-                   <div
-                     className={`absolute inset-0 bg-gradient-to-br ${item.accent} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}
-                   />
+        <div className="grid md:grid-cols-3 gap-8 md:gap-6 max-w-5xl mx-auto mb-24">
+          {[
+            {
+              stat: "73%",
+              description: "of jobs will change by 2030",
+              icon: TrendingUp,
+              accent: "from-blue-500 to-cyan-500",
+            },
+            {
+              stat: "4.3M",
+              description: "new roles emerging in AI/tech sectors",
+              icon: Sparkles,
+              accent: "from-blue-400 to-purple-500",
+            },
+            {
+              stat: "Now",
+              description: "is the time to upskill for tomorrow",
+              icon: Zap,
+              accent: "from-blue-500 to-green-500",
+            },
+          ].map((item, index) => {
+            const Icon = item.icon;
+            return (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 + index * 0.1 }}
+                className="group relative"
+              >
+                <div className="relative overflow-hidden rounded-2xl border border-white/10 backdrop-blur-sm p-8 hover:border-white/20 transition-all duration-300">
+                  <div
+                    className={`absolute inset-0 bg-gradient-to-br ${item.accent} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}
+                  />
 
-                   <div className="relative z-10">
-                     <div className="flex items-start justify-between mb-4">
-                       <div
-                         className={`p-3 rounded-lg bg-gradient-to-br ${item.accent} bg-opacity-10 border border-white/10`}
-                       >
-                         <Icon className="w-6 h-6 text-white" />
-                       </div>
-                     </div>
+                  <div className="relative z-10">
+                    <div className="flex items-start justify-between mb-4">
+                      <div
+                        className={`p-3 rounded-lg bg-gradient-to-br ${item.accent} bg-opacity-10 border border-white/10`}
+                      >
+                        <Icon className="w-6 h-6 text-white" />
+                      </div>
+                    </div>
 
-                     <div className="text-4xl md:text-5xl font-bold text-white mb-3 group-hover:text-white transition-colors">
-                       {item.stat}
-                     </div>
-                     <p className="text-zinc-400 text-sm leading-relaxed group-hover:text-zinc-300 transition-colors">
-                       {item.description}
-                     </p>
-                   </div>
-                 </div>
-               </motion.div>
-             );
-           })}
-         </div>
-       </div>
-     </section>
-   );
- }
+                    <div className="text-4xl md:text-5xl font-bold text-white mb-3 group-hover:text-white transition-colors">
+                      {item.stat}
+                    </div>
+                    <p className="text-zinc-400 text-sm leading-relaxed group-hover:text-zinc-300 transition-colors">
+                      {item.description}
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
 
 
 // ============ RESULT PREVIEW ============
@@ -341,7 +341,7 @@ function ResultPreview() {
                 <div className="pt-6 border-t border-white/10">
                   <h3 className="text-lg font-medium text-white flex items-center gap-2 mb-4">
                     <Zap className="w-5 h-5 text-yellow-400" />
-                    Recommended Skills for the Future
+                    Required Skills for the Future
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {[
@@ -592,9 +592,8 @@ function HowItWorks() {
                     x: isEven ? x : useTransform(x, (val) => -val),
                     scale,
                   }}
-                  className={`absolute ${
-                    isEven ? "left-[55%]" : "right-[55%]"
-                  } top-1/2 -translate-y-1/2 w-[400px]`}
+                  className={`absolute ${isEven ? "left-[55%]" : "right-[55%]"
+                    } top-1/2 -translate-y-1/2 w-[400px]`}
                 >
                   <div className="relative group">
                     <div className="absolute -inset-1 bg-gradient-to-r from-purple-600/20 to-blue-600/20 rounded-2xl blur-xl opacity-30 group-hover:opacity-60 transition duration-1000"></div>
@@ -617,14 +616,12 @@ function HowItWorks() {
 
                   {/* Connector Line - Desktop */}
                   <div
-                    className={`absolute top-1/2 ${
-                      isEven ? "-left-12" : "-right-12"
-                    } w-12 h-[1px] bg-white/20 -translate-y-1/2`}
+                    className={`absolute top-1/2 ${isEven ? "-left-12" : "-right-12"
+                      } w-12 h-[1px] bg-white/20 -translate-y-1/2`}
                   />
                   <div
-                    className={`absolute top-1/2 ${
-                      isEven ? "-left-1.5" : "-right-1.5"
-                    } w-3 h-3 rounded-full bg-white/30 backdrop-blur-sm -translate-y-1/2 border border-white/40`}
+                    className={`absolute top-1/2 ${isEven ? "-left-1.5" : "-right-1.5"
+                      } w-3 h-3 rounded-full bg-white/30 backdrop-blur-sm -translate-y-1/2 border border-white/40`}
                   />
                 </motion.div>
               );

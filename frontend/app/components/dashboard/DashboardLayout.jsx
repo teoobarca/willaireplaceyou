@@ -11,6 +11,7 @@ import {
     Menu,
     X,
     Home,
+    Store
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -21,10 +22,11 @@ export default function DashboardLayout({ children, pageTitle, pageDescription }
 
     const navItems = [
         { name: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
-        { name: "Analytics", icon: BarChart3, href: "/dashboard/analytics" },
+        { name: "Tasks", icon: BarChart3, href: "/dashboard/tasks" },
         { name: "Skills", icon: Lightbulb, href: "/dashboard/skills" },
         { name: "Roadmap", icon: Calendar, href: "/dashboard/roadmap" },
-        { name: "Career Paths", icon: Shuffle, href: "/dashboard/careers" },
+        { name: "Scenarios", icon: Shuffle, href: "/dashboard/scenarios" },
+        { name: "Market Analytics", icon: Store, href: "/dashboard/market" },
     ];
 
     return (
@@ -105,16 +107,7 @@ export default function DashboardLayout({ children, pageTitle, pageDescription }
                         </div>
 
                         {/* Quick Stats */}
-                        <div className="hidden md:flex items-center gap-4">
-                            <div className="bg-white/5 rounded-xl px-4 py-2 border border-white/10">
-                                <p className="text-xs text-zinc-400">Riziko</p>
-                                <p className="text-lg font-bold text-red-400">68%</p>
-                            </div>
-                            <div className="bg-white/5 rounded-xl px-4 py-2 border border-white/10">
-                                <p className="text-xs text-zinc-400">Pokrok</p>
-                                <p className="text-lg font-bold text-green-400">25%</p>
-                            </div>
-                        </div>
+
                     </div>
                 </header>
 

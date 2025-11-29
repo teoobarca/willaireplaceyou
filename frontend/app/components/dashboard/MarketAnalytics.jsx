@@ -39,6 +39,26 @@ export default function MarketAnalytics() {
 
     const maxValue = Math.max(...yearlyData.map((d) => d.value));
 
+    // Generate SVG path for the curve
+    const generatePath = () => {
+        const points = yearlyData.map((data, i) => {
+            const x = (i / (yearlyData.length - 1)) * 100;
+            const y = 100 - (data.value / maxValue) * 100;
+            return { x, y };
+        });
+
+        let path = `M ${points[0].x} ${points[0].y}`;
+        for (let i = 1; i < points.length; i++) {
+            path += ` L ${points[i].x} ${points[i].y}`;
+        }
+        return path;
+    };
+
+    const generateAreaPath = () => {
+        const linePath = generatePath();
+        return `${linePath} L 100 100 L 0 100 Z`;
+    };
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -55,32 +75,100 @@ export default function MarketAnalytics() {
                     </div>
                     <div>
                         <h3 className="text-xl font-bold text-white">
-                            Grafy a analytiky pracovného trhu
+                            Job Market Graphs & Analytics
                         </h3>
-                        <p className="text-sm text-zinc-400">Trendy 2025-2030</p>
+                        <p className="text-sm text-zinc-400">Trends 2025–2030</p>
                     </div>
                 </div>
 
-                {/* Outlook Chart */}
+                {/* Line Chart with Curve */}
                 <div className="mb-8">
                     <h4 className="text-sm font-semibold text-zinc-300 uppercase tracking-wider mb-4">
-                        Výhľad AI-adaptovaných rolí
+                        AI-Adapted Role Outlook
                     </h4>
-                    <div className="bg-white/5 rounded-xl p-4">
-                        <div className="flex items-end justify-between h-40 gap-2">
+                    <div className="bg-white/5 rounded-xl p-6">
+                        <div className="relative h-48">
+                            {/* SVG Chart */}
+                            <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                <defs>
+                                    <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" stopColor="#3b82f6" />
+                                        <stop offset="100%" stopColor="#a855f7" />
+                                    </linearGradient>
+                                    <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                        <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.3" />
+                                        <stop offset="100%" stopColor="#a855f7" stopOpacity="0.05" />
+                                    </linearGradient>
+                                </defs>
+
+                                {/* Area under curve */}
+                                <motion.path
+                                    d={generateAreaPath()}
+                                    fill="url(#areaGradient)"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ duration: 1, delay: 0.3 }}
+                                />
+
+                                {/* Curve line */}
+                                <motion.path
+                                    d={generatePath()}
+                                    stroke="url(#lineGradient)"
+                                    strokeWidth="0.5"
+                                    fill="none"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    initial={{ pathLength: 0 }}
+                                    animate={{ pathLength: 1 }}
+                                    transition={{ duration: 1.5, delay: 0.2 }}
+                                />
+
+                                {/* Data points */}
+                                {yearlyData.map((data, i) => {
+                                    const x = (i / (yearlyData.length - 1)) * 100;
+                                    const y = 100 - (data.value / maxValue) * 100;
+                                    return (
+                                        <motion.g key={i}>
+                                            <motion.circle
+                                                cx={x}
+                                                cy={y}
+                                                r="1.5"
+                                                fill="#fff"
+                                                stroke="url(#lineGradient)"
+                                                strokeWidth="0.5"
+                                                initial={{ scale: 0 }}
+                                                animate={{ scale: 1 }}
+                                                transition={{ duration: 0.3, delay: 0.5 + i * 0.1 }}
+                                            />
+                                        </motion.g>
+                                    );
+                                })}
+                            </svg>
+
+                            {/* Year labels */}
+                            <div className="absolute -bottom-6 left-0 right-0 flex justify-between">
+                                {yearlyData.map((data) => (
+                                    <span key={data.year} className="text-xs text-zinc-400">
+                                        {data.year}
+                                    </span>
+                                ))}
+                            </div>
+
+                            {/* Hover tooltips */}
                             {yearlyData.map((data, index) => (
-                                <div key={data.year} className="flex-1 flex flex-col items-center gap-2">
-                                    <motion.div
-                                        className="w-full bg-gradient-to-t from-blue-500 to-purple-500 rounded-t-lg relative group"
-                                        initial={{ height: 0 }}
-                                        animate={{ height: `${(data.value / maxValue) * 100}%` }}
-                                        transition={{ duration: 1, delay: 0.2 + index * 0.1 }}
-                                    >
-                                        <div className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/80 px-2 py-1 rounded text-xs whitespace-nowrap">
-                                            {data.value}%
-                                        </div>
-                                    </motion.div>
-                                    <span className="text-xs text-zinc-400">{data.year}</span>
+                                <div
+                                    key={index}
+                                    className="absolute group cursor-pointer"
+                                    style={{
+                                        left: `${(index / (yearlyData.length - 1)) * 100}%`,
+                                        top: `${100 - (data.value / maxValue) * 100}%`,
+                                        transform: 'translate(-50%, -50%)',
+                                    }}
+                                >
+                                    <div className="w-3 h-3 rounded-full bg-transparent group-hover:bg-white/20 transition-all"></div>
+                                    <div className="absolute -top-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/90 text-white text-xs px-3 py-1.5 rounded-lg whitespace-nowrap font-semibold border border-white/20 pointer-events-none">
+                                        {data.value}% Growth
+                                    </div>
                                 </div>
                             ))}
                         </div>
@@ -90,7 +178,7 @@ export default function MarketAnalytics() {
                 {/* Heatmap */}
                 <div className="mb-8">
                     <h4 className="text-sm font-semibold text-zinc-300 uppercase tracking-wider mb-4">
-                        Heatmapa zamestnanosti podľa odvetvia
+                        Employment Heatmap by Sector
                     </h4>
                     <div className="space-y-3">
                         {sectors.map((sector, index) => (
@@ -139,7 +227,7 @@ export default function MarketAnalytics() {
                     <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4">
                         <div className="flex items-center gap-2 mb-3">
                             <TrendingDown className="w-5 h-5 text-red-400" />
-                            <h5 className="font-semibold text-white">Klesajúce pozície</h5>
+                            <h5 className="font-semibold text-white">Declining Positions</h5>
                         </div>
                         <div className="space-y-2">
                             {trends.declining.map((role) => (
@@ -156,7 +244,7 @@ export default function MarketAnalytics() {
                     <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-4">
                         <div className="flex items-center gap-2 mb-3">
                             <TrendingUp className="w-5 h-5 text-green-400" />
-                            <h5 className="font-semibold text-white">Rastúce pozície</h5>
+                            <h5 className="font-semibold text-white">Growing Positions</h5>
                         </div>
                         <div className="space-y-2">
                             {trends.growing.map((role) => (
