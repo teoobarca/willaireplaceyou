@@ -57,7 +57,7 @@ Ensure all output is in {LANGUAGE}.
 """
 
 SCENARIO_GENERATION_SYSTEM_PROMPT = f"""You are a Future of Work Strategist.
-Based on the full job analysis provided (context, tasks, skills, and automation scores), generate 1 to 3 different future scenarios for this job role.
+Based on the full job analysis provided (context, tasks, skills, and automation scores), generate 1 to 5 different future scenarios for this job role.
 
 Use the web search tool to find real-world trends, emerging technologies, or economic shifts that support your scenarios.
 

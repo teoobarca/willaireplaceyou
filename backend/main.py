@@ -157,7 +157,7 @@ class FutureScenario(BaseModel):
     likelihood: Literal["low", "medium", "high"] = Field(description="Estimated likelihood: Low, Medium, High")
 
 class FutureScenarios(BaseModel):
-    scenarios: List[FutureScenario] = Field(description="List of 1 to 3 different future scenarios", min_length=1, max_length=3)
+    scenarios: List[FutureScenario] = Field(description="List of 1 to 5 different future scenarios", min_length=1, max_length=5)
 
 # --- New Models for Two-Step Process ---
 class CareerOptionInitial(BaseModel):
