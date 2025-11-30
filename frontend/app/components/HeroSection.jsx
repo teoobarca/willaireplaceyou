@@ -12,8 +12,9 @@ import {
   Stethoscope,
   TrendingUp,
   Loader2,
+  Brain
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import LightRays from "./LightRays";
@@ -24,6 +25,7 @@ export default function HeroSection() {
   const [showForm, setShowForm] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState(null);
+  const [currentCommentIndex, setCurrentCommentIndex] = useState(0);
   const [formData, setFormData] = useState({
     age: "",
     gender: "",
@@ -33,11 +35,88 @@ export default function HeroSection() {
     location: "",
     education: "",
   });
+  const [currentJobIndex, setCurrentJobIndex] = useState(0);
+  const [displayedText, setDisplayedText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const jobsToRotate = [
+    "Teachers?",
+    "Designers?",
+    "Lawyers?",
+    "Drivers?",
+    "Doctors?",
+    "Marketers?",
+  ];
+
+ useEffect(() => {
+   // Ak používateľ píše do inputu, nezobrazuj rotáciu
+   if (profession.trim().length > 0) {
+     return;
+   }
+
+   const currentJob = jobsToRotate[currentJobIndex];
+   const typingSpeed = isDeleting ? 50 : 150;
+   const pauseTime = 2000;
+
+   const timeout = setTimeout(() => {
+     if (!isDeleting) {
+       if (displayedText.length < currentJob.length) {
+         setDisplayedText(currentJob.slice(0, displayedText.length + 1));
+       } else {
+         setTimeout(() => setIsDeleting(true), pauseTime);
+       }
+     } else {
+       if (displayedText.length > 0) {
+         setDisplayedText(currentJob.slice(0, displayedText.length - 1));
+       } else {
+         setIsDeleting(false);
+         setCurrentJobIndex((prev) => (prev + 1) % jobsToRotate.length);
+       }
+     }
+   }, typingSpeed);
+
+   return () => clearTimeout(timeout);
+ }, [displayedText, isDeleting, currentJobIndex, profession]);
+
+ const thinkingComments = [
+   "Asking the AI overlords for permission...",
+   "Checking if robots can do your paperwork...",
+   "Calculating your coffee budget...",
+   "Consulting the digital crystal ball...",
+   "Teaching the algorithm to be nice...",
+   "Scanning for Terminators...",
+   "Measuring your human charm...",
+   "Reading your career horoscope...",
+   "Convincing the computer you're busy...",
+   "Almost done, just one more byte...",
+ ];
+
+ // Rotate through thinking comments
+ useEffect(() => {
+   if (!isAnalyzing) return;
+
+   const interval = setInterval(() => {
+     setCurrentCommentIndex((prev) => (prev + 1) % thinkingComments.length);
+   }, 6000);
+
+   return () => clearInterval(interval);
+ }, [isAnalyzing]);
+
+ // Animated dots
+ const [dots, setDots] = useState("");
+ useEffect(() => {
+   if (!isAnalyzing) return;
+   const interval = setInterval(() => {
+     setDots((prev) => (prev.length >= 3 ? "" : prev + "."));
+   }, 500);
+   return () => clearInterval(interval);
+ }, [isAnalyzing]);
 
   const handleAnalyze = async () => {
     try {
       setIsAnalyzing(true);
       setError(null);
+      window.scrollTo({ top: 0, behavior: "smooth" });
 
       const response = await fetch("http://localhost:8000/analyze", {
         method: "POST",
@@ -141,11 +220,18 @@ export default function HeroSection() {
               <div className="max-w-4xl mx-auto text-center">
                 <div className="inline-flex items-center gap-2 px-3 py-1 mt-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-sm text-zinc-300 mb-8 shadow-lg">
                   <Sparkles className="w-4 h-4 text-blue-400" />
-                  <span>Future of Work 2030</span>
+                  <span>Afnalyze your profession</span>
                 </div>
 
                 <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60">
-                  Will AI Replace Your Job?
+                  Will AI Replace{" "}
+                  <span className="relative text-5xl md:text-7xl font-bold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-b from-purple-500 to-blue-500">
+                    {profession.trim().length > 0 ? profession : displayedText}
+                    <span className="animate-pulse relative text-5xl md:text-7xl font-bold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-b from-purple-500 to-blue-500">
+                      |
+                    </span>
+                  </span>
+                  
                 </h1>
 
                 <p className="text-xl text-zinc-400 mb-12 max-w-2xl mx-auto leading-relaxed">
@@ -176,7 +262,7 @@ export default function HeroSection() {
                         }}
                         className="group/btn bg-gradient-to-br hover:cursor-pointer from-white to-zinc-100 text-black px-6 px-5 pl-2 py-3 rounded-xl font-medium hover:shadow-[0_10px_40px_rgba(0,0,0,0.3)] active:scale-[0.98] transition-all duration-300 flex items-center gap-2 whitespace-nowrap shadow-[0_4px_14px_rgba(0,0,0,0.15)] relative overflow-hidden"
                       >
-                        <span className="relative z-10 flex  justify-center items-center gap-1 mr-4 ">
+                        <span className="relative z-10 flex  justify-center items-center gap-1 sm:mr-0 mr-3  ">
                           Analyze{" "}
                           <ArrowRight className="w-4 h-4 relative text-black z-10 group-hover/btn:translate-x-1 transition-transform" />
                         </span>
@@ -206,7 +292,43 @@ export default function HeroSection() {
                 </div>
               </div>
             </motion.div>
-          ) : (
+          ) : isAnalyzing ? (
+            /* Loading Section */
+            <motion.div
+              key="loading"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.05 }}
+              transition={{ duration: 0.5, ease: "easeInOut" }}
+              className="-mt-7 w-full"
+            >
+              <div className="max-w-4xl mx-auto">
+                <div className="relative p-24 text-center">
+                  <div className="mb-12 relative">
+                    <div className="absolute inset-0 bg-blue-500/20 blur-xl rounded-full animate-pulse" />
+                    <Brain className="w-24 h-24 text-white mx-auto relative z-10 animate-pulse" />
+                  </div>
+                  <h3 className="text-xl font-medium text-zinc-400 mb-8 uppercase tracking-widest">
+                    Thinking<span className="inline-block w-4 text-left">{dots}</span>
+                  </h3>
+                  <div className="h-40 overflow-hidden relative flex justify-center items-center mask-image-gradient">
+                    <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black z-10 pointer-events-none opacity-0" />
+                    <AnimatePresence mode="wait">
+                      <motion.p
+                        key={currentCommentIndex}
+                        initial={{ y: 40, opacity: 0, filter: "blur(10px)" }}
+                        animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
+                        exit={{ y: -40, opacity: 0, filter: "blur(10px)" }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
+                        className="text-white text-4xl md:text-6xl font-semibold leading-tight px-4"
+                      >
+                        {thinkingComments[currentCommentIndex]}
+                      </motion.p>
+                    </AnimatePresence>
+                  </div>
+                </div>
+              </div>
+            </motion.div> ) : (
             /* Form Section */
             <motion.div
               key="form"
@@ -377,7 +499,12 @@ export default function HeroSection() {
                       {/* Submit Button */}
                       <button
                         onClick={handleAnalyze}
-                        disabled={isAnalyzing || !formData.jobTitle || !formData.jobDescription || !formData.dailyRoutine}
+                        disabled={
+                          isAnalyzing ||
+                          !formData.jobTitle ||
+                          !formData.jobDescription ||
+                          !formData.dailyRoutine
+                        }
                         className="w-full hover:cursor-pointer bg-gradient-to-br from-white to-zinc-100 text-black px-6 py-3 rounded-xl font-medium hover:shadow-[0_10px_40px_rgba(0,0,0,0.3)] active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2 shadow-[0_4px_14px_rgba(0,0,0,0.15)] mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {isAnalyzing ? (

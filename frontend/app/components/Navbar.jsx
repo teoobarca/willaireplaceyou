@@ -58,7 +58,7 @@ export default function Navbar() {
         />
       </div>
 
-      <div className="container mx-auto px-4 h-20 flex items-center justify-between relative z-10">
+      <div className="container mx-auto px-4 h-20 flex items-center justify-center relative z-10">
         {/* Logo with gradient and glow */}
         <Link href="/" className="relative group">
           <motion.div
@@ -75,7 +75,7 @@ export default function Navbar() {
         </Link>
 
         {/* Navigation Links with glassmorphism */}
-        <motion.button
+        {/* <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           className="relative group"
@@ -92,7 +92,7 @@ export default function Navbar() {
               </motion.div>
             </Link>
           </div>
-        </motion.button>
+        </motion.button> */}
       </div>
     </motion.nav>
   );

@@ -16,7 +16,72 @@ import {
   Code2,
 } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
+
+function AnimatedNumber({ value, duration = 2, delay = 0, suffix = "" }) {
+  const [count, setCount] = useState(0);
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasAnimated) {
+          setHasAnimated(true);
+
+          const end = typeof value === "string" ? parseFloat(value) : value;
+          const startTime = Date.now() + delay * 1000;
+          const animationDuration = duration * 1000;
+
+          const animate = () => {
+            const now = Date.now();
+            const timeSinceStart = now - startTime;
+
+            if (timeSinceStart < 0) {
+              requestAnimationFrame(animate);
+              return;
+            }
+
+            const progress = Math.min(timeSinceStart / animationDuration, 1);
+            const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+            const current = easeOutQuart * end;
+
+            setCount(current);
+
+            if (progress < 1) {
+              requestAnimationFrame(animate);
+            }
+          };
+
+          requestAnimationFrame(animate);
+        }
+      },
+      { threshold: 0.3 }
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => {
+      if (ref.current) {
+        observer.unobserve(ref.current);
+      }
+    };
+  }, [value, duration, delay, hasAnimated]);
+
+  const formatNumber = (num) => {
+    if (value.toString().includes("M")) {
+      return Math.floor(num) + "M";
+    }
+    if (value.toString().includes("%")) {
+      return Math.floor(num) + "%";
+    }
+    return Math.floor(num).toString();
+  };
+
+  return <span ref={ref}>{formatNumber(count)}</span>;
+}
 
 // ============ WHY IT EXISTS ============
 function WhyItExists() {
@@ -69,20 +134,20 @@ function WhyItExists() {
         <div className="grid md:grid-cols-3 gap-8 md:gap-6 max-w-5xl mx-auto mb-24">
           {[
             {
-              stat: "73%",
-              description: "of jobs will change by 2030",
+              stat: "85M",
+              description: "jobs displaced by automation by 2025",
               icon: TrendingUp,
               accent: "from-blue-500 to-cyan-500",
             },
             {
-              stat: "4.3M",
+              stat: "97M",
               description: "new roles emerging in AI/tech sectors",
               icon: Sparkles,
               accent: "from-blue-400 to-purple-500",
             },
             {
-              stat: "Now",
-              description: "is the time to upskill for tomorrow",
+              stat: "44%",
+              description: "of core skills will change by 2027",
               icon: Zap,
               accent: "from-blue-500 to-green-500",
             },
@@ -112,7 +177,11 @@ function WhyItExists() {
                     </div>
 
                     <div className="text-4xl md:text-5xl font-bold text-white mb-3 group-hover:text-white transition-colors">
-                      {item.stat}
+                      <AnimatedNumber
+                        value={item.stat}
+                        duration={2.5}
+                        delay={0.3 + index * 0.2}
+                      />
                     </div>
                     <p className="text-zinc-400 text-sm leading-relaxed group-hover:text-zinc-300 transition-colors">
                       {item.description}
