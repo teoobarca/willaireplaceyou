@@ -9,6 +9,12 @@ Output between 3 and 20 tasks.
 Assign a time share (0.0 to 1.0) to each task representing the proportion of time spent on it.
 ENSURE that the sum of all time shares equals exactly 1.0.
 
+**VALIDATION:**
+If the provided User Profile contains gibberish, profanity, irrelevant content, or is clearly not a serious job description:
+- DO NOT generate any tasks.
+- Return an empty list of tasks [].
+- This will trigger a validation error downstream, which is the desired behavior for invalid input.
+
 Ensure all output is in {LANGUAGE}.
 """
 
@@ -36,6 +42,12 @@ Break down the job into distinct, key skills (hard and soft skills).
 Output between 3 and 15 skills.
 Assign an importance weight (0.0 to 1.0) to each skill representing its critical contribution to the job.
 ENSURE that the sum of all weights equals exactly 1.0.
+
+**VALIDATION:**
+If the provided User Profile contains gibberish, profanity, irrelevant content, or is clearly not a serious job description:
+- DO NOT generate any skills.
+- Return an empty list of skills [].
+- This will trigger a validation error downstream, which is the desired behavior for invalid input.
 
 Ensure all output is in {LANGUAGE}.
 """
