@@ -95,7 +95,13 @@ export default function HeroSection() {
     if (!isAnalyzing) return;
 
     const interval = setInterval(() => {
-      setCurrentCommentIndex((prev) => (prev + 1) % thinkingComments.length);
+      setCurrentCommentIndex((prev) => {
+        let next;
+        do {
+          next = Math.floor(Math.random() * thinkingComments.length);
+        } while (next === prev && thinkingComments.length > 1);
+        return next;
+      });
     }, 6000);
 
     return () => clearInterval(interval);
