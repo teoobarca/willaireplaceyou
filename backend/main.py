@@ -13,8 +13,7 @@ from langchain_core.messages import SystemMessage, HumanMessage, BaseMessage
 from prompts import (
     TASKS_DECOMPOSITION_SYSTEM_PROMPT, TASKS_REPLACABILITY_SYSTEM_PROMPT,
     SKILLS_DECOMPOSITION_SYSTEM_PROMPT, SKILLS_REPLACABILITY_SYSTEM_PROMPT,
-    SCENARIO_GENERATION_SYSTEM_PROMPT, CAREER_RECOMMENDATIONS_SYSTEM_PROMPT,
-    ROADMAP_GENERATION_PROMPT)
+    SCENARIO_GENERATION_SYSTEM_PROMPT, CAREER_RECOMMENDATIONS_SYSTEM_PROMPT)
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -32,50 +31,6 @@ def get_text_content(message: BaseMessage) -> str:
             if content_block.get("type") == "text"
         ])
     return message.content if isinstance(message.content, str) else ""
-
-
-# --- Local Validation Function using Mermaid CLI ---
-async def validate_mermaid_code_local(code: str) -> tuple[bool, str]:
-    """
-    Validates Mermaid code using the locally installed Mermaid CLI (mmdc).
-    Returns (is_valid, error_message).
-    """
-    code = code.strip()
-    if not code:
-        return False, "Code is empty."
-
-    # Basic Structure Check
-    if not code.startswith("flowchart TD"):
-        return False, "Diagram must start strictly with 'flowchart TD'."
-
-    if "```" in code:
-        return False, "Code contains markdown fences (```). Please output ONLY the raw code."
-
-    try:
-        # Run mmdc with stdin input and stdout output to avoid temporary files
-        process = await asyncio.create_subprocess_exec(
-            "mmdc",
-            "-i",
-            "-",
-            "-o",
-            "-",
-            stdin=asyncio.subprocess.PIPE,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE)
-
-        # Pass code via stdin
-        stdout, stderr = await process.communicate(input=code.encode())
-
-        if process.returncode == 0:
-            return True, ""
-        else:
-            error_msg = stderr.decode().strip()
-            return False, f"Mermaid Compiler Error:\n{error_msg}"
-
-    except FileNotFoundError:
-        return False, "Mermaid CLI (mmdc) not found. Please ensure it is installed globally via 'npm install -g @mermaid-js/mermaid-cli'."
-    except Exception as e:
-        return False, f"Unexpected error running validation: {str(e)}"
 
 
 app = FastAPI()
@@ -200,95 +155,11 @@ class CareerRecommendationsInitial(BaseModel):
         max_length=5)
 
 
-class CareerOption(CareerOptionInitial):
-    roadmap: str = Field(
-        description="Mermaid diagram code for a roadmap to approach this role")
-
-
-class CareerRecommendations(BaseModel):
-    recommendations: List[CareerOption] = Field(
-        description="List of 3 to 5 recommended career options",
-        min_length=3,
-        max_length=5)
-
-
 # ---------------------------------------
 
 llm = ChatOpenAI(model="gpt-5.1",
                  # temperature=1
                  )
-
-
-async def generate_roadmap_with_local_loop(job_title: str,
-                                           job_context: str) -> str:
-    """
-    Generates a Mermaid roadmap using a local validation loop (inspired by the Typst compiler workflow).
-    """
-
-    MAX_ATTEMPTS = 3
-
-    # Initial conversation
-    messages = [
-        SystemMessage(content=ROADMAP_GENERATION_PROMPT),
-        HumanMessage(
-            content=
-            f"Create a career roadmap for: {job_title}\nContext: {job_context}"
-        )
-    ]
-
-    for attempt in range(1, MAX_ATTEMPTS + 1):
-        print(f"🔄 Attempt {attempt}/{MAX_ATTEMPTS} for {job_title}")
-
-        # Invoke LLM
-        response = await llm.ainvoke(
-            messages, config={"run_name": f"RoadmapGen_Attempt_{attempt}"})
-        content = get_text_content(response).strip()
-
-        # --- CLEANUP: Handle JSON-wrapped output or fences ---
-        mermaid_code = content
-
-        # 1. Check if it's a JSON string (common artifact when models get confused about tools/formats)
-        if content.startswith("{") and "mermaid_text" in content:
-            try:
-                data = json.loads(content)
-                if "mermaid_text" in data:
-                    mermaid_code = data["mermaid_text"]
-            except json.JSONDecodeError:
-                pass  # Not valid JSON, proceed with raw content
-
-        # 2. Check for markdown fences
-        if "```" in mermaid_code:
-            pattern = r"```(?:mermaid)?\n?(.*?)```"
-            match = re.search(pattern, mermaid_code, re.DOTALL)
-            if match:
-                mermaid_code = match.group(1).strip()
-
-        # Ensure we strip whitespace again
-        mermaid_code = mermaid_code.strip()
-
-        # Add the raw response to history so the LLM knows what it generated
-        messages.append(response)
-
-        # Validate Locally using mmdc
-        is_valid, error_msg = await validate_mermaid_code_local(mermaid_code)
-
-        if is_valid:
-            print(f"✅ Valid diagram generated for {job_title}")
-            return mermaid_code
-        else:
-            print(f"❌ Failed attempt {attempt} for {job_title}: {error_msg}")
-            # Feedback for next turn
-            feedback_msg = (
-                f"The Mermaid compiler raised an error on attempt {attempt}:\n\n"
-                f"{error_msg}\n\n"
-                "Please return the ENTIRE corrected Mermaid diagram code again. "
-                "Ensure STRICT adherence to the syntax.\n"
-                "DO NOT wrap the output in JSON. DO NOT wrap the output in markdown fences (```). Just return the raw code starting with 'flowchart TD'."
-            )
-            messages.append(HumanMessage(content=feedback_msg))
-
-    print(f"⚠️ All attempts failed for {job_title}")
-    return "flowchart TD\nA[Error] --> B[Could not generate valid diagram]"
 
 
 async def evaluate_automation_potential(item: Union[Task, Skill],
@@ -503,18 +374,6 @@ Education: {profile.education}"""
         CareerOptionInitial] = result_careers_initial[
             "structured_response"].recommendations
 
-    # 5. Generate Roadmaps for each recommendation (Sequential or Parallel)
-    # We'll do parallel for speed
-    async def process_career_option(
-            option: CareerOptionInitial) -> CareerOption:
-        # Use the new local loop based function with mmdc
-        roadmap_code = await generate_roadmap_with_local_loop(
-            option.job_title, job_context)
-        return CareerOption(**option.model_dump(), roadmap=roadmap_code)
-
-    final_recommendations = await asyncio.gather(
-        *[process_career_option(opt) for opt in initial_recommendations])
-
     return {
         "task_automation_breakdown": task_automation_breakdown,
         "total_task_automation": total_task_automation,
@@ -522,7 +381,7 @@ Education: {profile.education}"""
         "total_skill_automation": total_skill_automation,
         "weighted_final_score": weighted_final_score,
         "future_scenarios": result_scenarios["structured_response"].scenarios,
-        "career_recommendations": final_recommendations
+        "career_recommendations": initial_recommendations
     }
 
 
