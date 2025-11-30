@@ -259,7 +259,7 @@ Education: {profile.education}"""
         tasks: List[Task] = result_tasks["structured_response"].tasks
         skills: List[Skill] = result_skills["structured_response"].skills
     except (ValidationError, Exception) as e:
-        print(f"Validation Error during extraction: {e}")
+        print("⚠️ Input validation failed (likely invalid/short content). Returning 400.")
         raise HTTPException(
             status_code=400,
             detail={
