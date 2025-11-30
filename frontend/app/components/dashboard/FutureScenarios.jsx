@@ -44,7 +44,7 @@ export default function FutureScenarios() {
           likelihoodColor,
           likelihoodBg,
         };
-      },
+      }
     );
 
     setScenarios(formattedScenarios);
@@ -76,9 +76,6 @@ export default function FutureScenarios() {
     <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6">
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-white mb-2">Scenarios</h2>
-        <p className="text-sm text-zinc-400">
-          Potential evolution paths for your profession over the next 5-10 years
-        </p>
       </div>
 
       {/* Timeline Overview*/}
@@ -113,7 +110,7 @@ export default function FutureScenarios() {
               onClick={() =>
                 setExpandedIndex(expandedIndex === index ? -1 : index)
               }
-              className="w-full p-4 text-left hover:bg-white/5 transition-colors"
+              className="w-full p-4 text-left hover:cursor-pointer hover:bg-white/5 transition-colors"
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1">

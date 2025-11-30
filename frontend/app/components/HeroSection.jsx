@@ -123,22 +123,21 @@ export default function HeroSection() {
       setError(null);
       window.scrollTo({ top: 0, behavior: "smooth" });
 
-      const response = await fetch("https://api-hack25.hamper.dev/analyze", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          age: formData.age,
-          gender: formData.gender,
-          job_title: formData.jobTitle,
-          job_description: formData.jobDescription,
-          daily_routine: formData.dailyRoutine,
-          location: formData.location,
-          education: formData.education,
-        }),
-      });
-
+     const response = await fetch(process.env.NEXT_PUBLIC_API_URL, {
+       method: "POST",
+       headers: {
+         "Content-Type": "application/json",
+       },
+       body: JSON.stringify({
+         age: formData.age,
+         gender: formData.gender,
+         job_title: formData.jobTitle,
+         job_description: formData.jobDescription,
+         daily_routine: formData.dailyRoutine,
+         location: formData.location,
+         education: formData.education,
+       }),
+     });
       if (!response.ok) {
         const errorData = await response.json();
         if (response.status === 400 && errorData.detail?.message) {
@@ -231,11 +230,11 @@ export default function HeroSection() {
               <div className="max-w-4xl mx-auto text-center">
                 <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60">
                   Will AI Replace{" "}
-                  <span className="relative text-5xl md:text-7xl font-bold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-b from-purple-500 to-blue-500">
+                  <span className="relative text-5xl md:text-7xl font-bold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-b from-blue-500 to-purple-500">
                     {profession.trim().length > 0
                       ? profession + "?"
                       : displayedText}
-                    <span className="animate-pulse relative text-5xl md:text-7xl font-bold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-b from-purple-500 to-blue-500">
+                    <span className="animate-pulse relative text-5xl md:text-7xl font-bold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-b from-blue-500 to-purple-500">
                       |
                     </span>
                   </span>
@@ -320,7 +319,7 @@ export default function HeroSection() {
                     <span className="inline-block w-4 text-left">{dots}</span>
                   </h3>
                   <div
-                    className="h-40 md:h-64 overflow-hidden relative flex justify-center items-center"
+                    className="h-32 sm:h-40 md:h-64 overflow-hidden relative flex justify-center items-center"
                     style={{
                       maskImage:
                         "linear-gradient(to bottom, transparent, black 20%, black 80%, transparent)",
@@ -335,7 +334,7 @@ export default function HeroSection() {
                         animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
                         exit={{ y: -40, opacity: 0, filter: "blur(10px)" }}
                         transition={{ duration: 0.8, ease: "easeOut" }}
-                        className="text-white text-4xl md:text-6xl font-semibold leading-tight px-4"
+                        className="text-white text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-semibold leading-tight px-4 text-center"
                       >
                         {thinkingComments[currentCommentIndex]}
                       </motion.p>
@@ -357,8 +356,8 @@ export default function HeroSection() {
               <div className="max-w-xl mx-auto">
                 <div className="relative">
                   <div className="relative bg-white/5 backdrop-blur-2xl border border-white/20 rounded-2xl p-6 shadow-[0_8px_32px_0_rgba(31,38,135,0.37)]">
-                    <div className="mb-3 flex-col">
-                      <div className="flex-1">
+                    <div className="mb-3 flex flex-row gap-3">
+                      <div className="flex-1 w-1/2">
                         <label className="block text-sm font-medium text-zinc-300 mb-1.5">
                           Gender
                         </label>
@@ -375,7 +374,7 @@ export default function HeroSection() {
                           className="w-full bg-white/5 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-white/20 transition-all"
                         />
                       </div>
-                      <div className="flex-1">
+                      <div className="flex-1 w-1/2">
                         <label className="block text-sm font-medium text-zinc-300 mb-1.5">
                           Age
                         </label>
@@ -426,7 +425,7 @@ export default function HeroSection() {
                             jobDescription: e.target.value,
                           })
                         }
-                        placeholder="Describe what you do in your role..."
+                        placeholder="Describe your job in one sentence."
                         rows={1}
                         className="w-full bg-white/5 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-white/20 transition-all resize-none"
                       />
@@ -452,7 +451,7 @@ export default function HeroSection() {
                     </div>
 
                     {/* Location & Education Row */}
-                    <div className="grid grid-cols-2 gap-4 mb-3">
+                    <div className="grid grid-cols-2 gap-4 mb-5">
                       {/* Location */}
                       <div>
                         <label className="block text-sm font-medium text-zinc-300 mb-1.5">
@@ -475,7 +474,7 @@ export default function HeroSection() {
                       {/* Education */}
                       <div>
                         <label className="block text-sm font-medium text-zinc-300 mb-1.5">
-                          Education and Hobbies
+                          Education
                         </label>
                         <input
                           type="text"

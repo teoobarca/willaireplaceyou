@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Brain, Bot, Users, Lightbulb, TrendingUp, Clock } from "lucide-react";
+import { Brain, Bot, Users, Lightbulb, TrendingUp, Clock, AlertCircle, CheckCircle2 } from "lucide-react";
 import useProfessionData, { getTopSkills } from "../../hooks/useProfessionData";
 
 export default function SkillsEngine() {
@@ -92,29 +92,39 @@ export default function SkillsEngine() {
       </div>
 
       {professionData && (
-        <div className="mb-6 pb-6 border-b border-white/10">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-white/5 rounded-lg p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <TrendingUp className="w-4 h-4 text-blue-400" />
-                <span className="text-xs text-zinc-400">Total Skills</span>
-              </div>
-              <div className="text-2xl font-bold text-white">
-                {
-                  Object.keys(professionData.skill_automation_breakdown || {})
-                    .length
-                }
-              </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          <div className="bg-white/5 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <TrendingUp className="w-4 h-4 text-blue-400" />
+              <span className="text-xs text-zinc-400">Total Skills</span>
             </div>
-            <div className="bg-white/5 rounded-lg p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <Clock className="w-4 h-4 text-purple-400" />
-                <span className="text-xs text-zinc-400">Avg Automation</span>
-              </div>
-              <div className="text-2xl font-bold text-white">
-                {Math.round((professionData.total_skill_automation || 0) * 100)}
-                %
-              </div>
+            <div className="text-2xl font-bold text-white">{skills.length}</div>
+          </div>
+          <div className="bg-white/5 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <AlertCircle className="w-4 h-4 text-red-400" />
+              <span className="text-xs text-zinc-400">Avg Automation</span>
+            </div>
+            <div className="text-2xl font-bold text-white">
+              {Math.round((professionData.total_skill_automation || 0) * 100)}%
+            </div>
+          </div>
+          <div className="bg-white/5 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <CheckCircle2 className="w-4 h-4 text-green-400" />
+              <span className="text-xs text-zinc-400">Low Risk</span>
+            </div>
+            <div className="text-2xl font-bold text-white">
+              {skills.filter((s) => s.automation < 40).length}
+            </div>
+          </div>
+          <div className="bg-white/5 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <AlertCircle className="w-4 h-4 text-red-400" />
+              <span className="text-xs text-zinc-400">High Risk</span>
+            </div>
+            <div className="text-2xl font-bold text-white">
+              {skills.filter((s) => s.automation > 70).length}
             </div>
           </div>
         </div>
@@ -163,8 +173,8 @@ export default function SkillsEngine() {
                             skill.automation > 70
                               ? "bg-red-500"
                               : skill.automation > 40
-                                ? "bg-yellow-500"
-                                : "bg-green-500"
+                              ? "bg-yellow-500"
+                              : "bg-green-500"
                           }`}
                           style={{ width: `${skill.automation}%` }}
                         />

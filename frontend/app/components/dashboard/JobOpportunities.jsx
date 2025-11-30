@@ -12,6 +12,7 @@ import {
   Target,
 } from "lucide-react";
 
+
 export default function JobOpportunities() {
   const [jobs, setJobs] = useState([]);
   const [expandedIndex, setExpandedIndex] = useState(null);
@@ -73,43 +74,16 @@ export default function JobOpportunities() {
     };
   };
 
-  const getPhaseColor = (index) => {
-    const colors = [
-      "from-blue-500/20 to-blue-600/5 border-blue-500/30",
-      "from-green-500/20 to-green-600/5 border-green-500/30",
-      "from-orange-500/20 to-orange-600/5 border-orange-500/30",
-      "from-purple-500/20 to-purple-600/5 border-purple-500/30",
-    ];
-    return colors[index % colors.length];
-  };
+  // Vizuálny komponent pre roadmap
+  const RoadmapDiagram = ({ roadmap }) => {
+    // Use sample roadmap if no roadmap provided, or if provided roadmap is empty
+    const chartData = roadmap || SAMPLE_ROADMAP;
 
-  const parseRoadmap = (roadmapString) => {
-    if (!roadmapString) return [];
-
-    // Parsing Mermaid flowchart syntax
-    const lines = roadmapString.split("\n").filter((line) => line.trim());
-    const phases = [];
-    let currentPhase = null;
-
-    lines.forEach((line) => {
-      if (line.includes("subgraph")) {
-        const phaseName = line.match(/\[(.*?)\]/)?.[1] || "";
-        currentPhase = {
-          phase: phaseName.replace(/Phase \d+: /, ""),
-          steps: [],
-        };
-      } else if (line.includes("-->") || (line.includes("(") && currentPhase)) {
-        const stepMatch = line.match(/\((.*?)\)/);
-        if (stepMatch) {
-          currentPhase.steps.push(stepMatch[1]);
-        }
-      } else if (line.includes("end") && currentPhase) {
-        phases.push(currentPhase);
-        currentPhase = null;
-      }
-    });
-
-    return phases;
+    return (
+      <div className="w-full overflow-hidden">
+        <MermaidDiagram chart={chartData} />
+      </div>
+    );
   };
 
   if (loading) {
@@ -158,7 +132,6 @@ export default function JobOpportunities() {
           const colors = getTransitionColor(job.ease_of_transition);
           const isExpanded = expandedIndex === index;
           const isRoadmapVisible = showRoadmap[index];
-          const roadmapPhases = parseRoadmap(job.roadmap);
 
           return (
             <div
@@ -168,7 +141,7 @@ export default function JobOpportunities() {
               {/* Job Header */}
               <button
                 onClick={() => setExpandedIndex(isExpanded ? null : index)}
-                className="w-full p-6 text-left hover:bg-white/5 transition-colors"
+                className="w-full p-6  hover:cursor-pointer text-left hover:bg-white/5 transition-colors"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
@@ -299,73 +272,7 @@ export default function JobOpportunities() {
                         </div>
                       )}
 
-                    {/* Roadmap Toggle */}
-                    {roadmapPhases.length > 0 && (
-                      <>
-                        <button
-                          onClick={() =>
-                            setShowRoadmap({
-                              ...showRoadmap,
-                              [index]: !isRoadmapVisible,
-                            })
-                          }
-                          className="w-full bg-purple-500/10 border border-purple-500/30 rounded-lg p-4 hover:border-purple-500/50 transition-all"
-                        >
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                              <Map className="w-5 h-5 text-purple-400" />
-                              <span className="font-semibold text-white">
-                                {isRoadmapVisible ? "Hide" : "View"} Transition
-                                Roadmap
-                              </span>
-                            </div>
-                            <ChevronDown
-                              className={`w-5 h-5 text-zinc-400 transition-transform ${
-                                isRoadmapVisible ? "rotate-180" : ""
-                              }`}
-                            />
-                          </div>
-                        </button>
-
-                        {/* Roadmap */}
-                        {isRoadmapVisible && (
-                          <div className="space-y-4 pt-2">
-                            {roadmapPhases.map((phase, phaseIdx) => (
-                              <div
-                                key={phaseIdx}
-                                className={`bg-gradient-to-r ${getPhaseColor(
-                                  phaseIdx
-                                )} border rounded-lg p-4`}
-                              >
-                                <div className="flex items-center gap-3 mb-3">
-                                  <div className="px-3 py-1 bg-white/5 rounded-full text-xs font-bold text-zinc-300">
-                                    Phase {phaseIdx + 1}
-                                  </div>
-                                  <h4 className="font-bold text-white">
-                                    {phase.phase}
-                                  </h4>
-                                </div>
-                                <div className="space-y-2">
-                                  {phase.steps.map((step, stepIdx) => (
-                                    <div
-                                      key={stepIdx}
-                                      className="flex items-center gap-3 bg-white/5 rounded-lg px-3 py-2"
-                                    >
-                                      <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold text-zinc-300">
-                                        {stepIdx + 1}
-                                      </div>
-                                      <span className="text-sm text-zinc-200">
-                                        {step}
-                                      </span>
-                                    </div>
-                                  ))}
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </>
-                    )}
+                 
 
                     {/* Transition Summary */}
                     <div
