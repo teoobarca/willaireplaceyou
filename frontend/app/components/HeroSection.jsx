@@ -357,22 +357,41 @@ export default function HeroSection() {
               <div className="max-w-xl mx-auto">
                 <div className="relative">
                   <div className="relative bg-white/5 backdrop-blur-2xl border border-white/20 rounded-2xl p-6 shadow-[0_8px_32px_0_rgba(31,38,135,0.37)]">
-                    <div className="mb-3">
-                      <label className="block text-sm font-medium text-zinc-300 mb-1.5">
-                        Gender
-                      </label>
-                      <input
-                        type="text"
-                        value={formData.gender}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            gender: e.target.value,
-                          })
-                        }
-                        placeholder="e.g., Man, Woman, Non-binary"
-                        className="w-full bg-white/5 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-white/20 transition-all"
-                      />
+                    <div className="mb-3 flex-col">
+                      <div className="flex-1">
+                        <label className="block text-sm font-medium text-zinc-300 mb-1.5">
+                          Gender
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.gender}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              gender: e.target.value,
+                            })
+                          }
+                          placeholder="e.g., Man, Woman, Non-binary"
+                          className="w-full bg-white/5 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-white/20 transition-all"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <label className="block text-sm font-medium text-zinc-300 mb-1.5">
+                          Age
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.age}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              age: e.target.value,
+                            })
+                          }
+                          placeholder="e.g. 25"
+                          className="w-full bg-white/5 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-white/20 transition-all"
+                        />
+                      </div>
                     </div>
 
                     {/* Job Title */}
