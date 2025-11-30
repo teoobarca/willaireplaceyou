@@ -123,21 +123,21 @@ export default function HeroSection() {
       setError(null);
       window.scrollTo({ top: 0, behavior: "smooth" });
 
-     const response = await fetch(process.env.NEXT_PUBLIC_API_URL, {
-       method: "POST",
-       headers: {
-         "Content-Type": "application/json",
-       },
-       body: JSON.stringify({
-         age: formData.age,
-         gender: formData.gender,
-         job_title: formData.jobTitle,
-         job_description: formData.jobDescription,
-         daily_routine: formData.dailyRoutine,
-         location: formData.location,
-         education: formData.education,
-       }),
-     });
+      const response = await fetch(process.env.NEXT_PUBLIC_API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          age: formData.age,
+          gender: formData.gender,
+          job_title: formData.jobTitle,
+          job_description: formData.jobDescription,
+          daily_routine: formData.dailyRoutine,
+          location: formData.location,
+          education: formData.education,
+        }),
+      });
       if (!response.ok) {
         const errorData = await response.json();
         if (response.status === 400 && errorData.detail?.message) {
@@ -309,12 +309,12 @@ export default function HeroSection() {
               className="-mt-7 w-full"
             >
               <div className="max-w-4xl mx-auto">
-                <div className="relative p-24 text-center">
-                  <div className="mb-12 relative">
+                <div className="relative px-4 py-12 md:p-24 text-center">
+                  <div className="mb-8 md:mb-12 relative">
                     <div className="absolute inset-0 bg-blue-500/20 blur-xl rounded-full animate-pulse" />
-                    <Brain className="w-24 h-24 text-white mx-auto relative z-10 animate-pulse" />
+                    <Brain className="w-16 h-16 md:w-24 md:h-24 text-white mx-auto relative z-10 animate-pulse" />
                   </div>
-                  <h3 className="text-xl font-medium text-zinc-400 mb-8 uppercase tracking-widest">
+                  <h3 className="text-lg md:text-xl font-medium text-zinc-400 mb-4 md:mb-8 uppercase tracking-widest">
                     Thinking
                     <span className="inline-block w-4 text-left">{dots}</span>
                   </h3>
@@ -427,7 +427,7 @@ export default function HeroSection() {
                         }
                         placeholder="Describe your job in one sentence."
                         rows={1}
-                        className="w-full bg-white/5 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-white/20 transition-all resize-none"
+                        className="w-full bg-white/5 border border-white/20 rounded-xl px-4 py-2.5 text-white overflow-hidden placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-white/20 transition-all resize-none"
                       />
                     </div>
 

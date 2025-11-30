@@ -13,21 +13,23 @@ import { motion } from "framer-motion";
 export default function Footer() {
   const socialLinks = [
     {
-      icon: Twitter,
-      href: "#",
-      label: "Twitter",
-      color: "hover:text-blue-400",
+      href: "https://hamper.dev/",
+      label: "Hamper",
+      color: "hover:text-blue-500",
     },
     {
-      icon: Github,
-      href: "#",
-      label: "GitHub",
-      color: "hover:text-purple-400",
+      href: "https://www.jaroslav-portfolio.eu/",
+      label: "JaXo",
+      color: "hover:text-blue-500",
     },
     {
-      icon: Linkedin,
-      href: "#",
-      label: "LinkedIn",
+      href: "https://github.com/Vl4dk0",
+      label: "Vladko",
+      color: "hover:text-blue-500",
+    },
+    {
+      href: "https://github.com/mobi-mobi",
+      label: "Mišo",
       color: "hover:text-blue-500",
     },
   ];
@@ -122,7 +124,7 @@ export default function Footer() {
             </div>
           </motion.div>
 
-          {/* Social Links */}
+          {/* Portfolio Links */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -133,31 +135,22 @@ export default function Footer() {
             <h3 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">
               Connect With Us
             </h3>
-            <div className="flex gap-3">
-              {socialLinks.map((social, index) => {
-                const Icon = social.icon;
-                return (
-                  <motion.a
-                    key={social.label}
-                    href={social.href}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.3, delay: 0.3 + index * 0.1 }}
-                    whileHover={{ scale: 1.1, y: -2 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="relative group"
-                    aria-label={social.label}
-                  >
-                    <div className="absolute -inset-1 bg-gradient-to-r from-purple-600/30 to-blue-600/30 rounded-xl blur opacity-0 group-hover:opacity-100 transition duration-300"></div>
-                    <div
-                      className={`relative p-3 rounded-xl bg-white/5 backdrop-blur-md border border-white/20 text-zinc-400 ${social.color} transition-all group-hover:bg-white/10 group-hover:border-white/30`}
-                    >
-                      <Icon className="w-5 h-5" />
-                    </div>
-                  </motion.a>
-                );
-              })}
+            <div className="flex flex-col gap-3">
+              {socialLinks.map((link, index) => (
+                <motion.a
+                  key={link.label}
+                  href={link.href}
+                  initial={{ opacity: 0, x: -10 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: 0.2 + index * 0.1 }}
+                  whileHover={{ x: 5 }}
+                  className={`text-zinc-400 ${link.color} transition-all text-sm flex items-center gap-2 group w-fit`}
+                >
+                  <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  {link.label}
+                </motion.a>
+              ))}
             </div>
           </motion.div>
         </div>
@@ -168,24 +161,14 @@ export default function Footer() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="pt-8 border-t border-white/5"
+          className="pt-8 border-t border-white/5 mx-auto flex justify-center items-center"
         >
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-zinc-500">
+          <div className="flex flex-col  md:flex-row justify-between items-center gap-4 text-sm text-zinc-500">
             <p>
               &copy; {new Date().getFullYear()} willaireplace.you. Built with{" "}
               <span className="text-purple-400">AIove</span> for the future.
             </p>
-            <div className="flex gap-6 text-xs">
-              <a href="#" className="hover:text-white transition-colors">
-                Privacy Policy
-              </a>
-              <a href="#" className="hover:text-white transition-colors">
-                Terms of Service
-              </a>
-              <a href="#" className="hover:text-white transition-colors">
-                Cookie Policy
-              </a>
-            </div>
+           
           </div>
         </motion.div>
       </div>

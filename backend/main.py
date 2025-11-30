@@ -2,7 +2,7 @@ import asyncio
 import json
 import re
 from typing import List, Union, Literal
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, ValidationError
 import uvicorn
@@ -35,19 +35,18 @@ def get_text_content(message: BaseMessage) -> str:
 
 app = FastAPI()
 
+origins = [
+    "https://willaireplace.you",
+    "http://localhost:3000"
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost",
-        "http://localhost:3000",
-        "https://willaireplace.you",
-        "https://www.willaireplace.you",
-        "https://api-hack25.hamper.dev",
-    ],
-    allow_credentials=True,
+    allow_origins=origins,
+    allow_credentials=False,
     allow_methods=["*"],
-    allow_headers=["*"],
-     expose_headers=["*"],
+    allow_headers=["*"]
+    # expose_headers=["*"]
 )
 
 
@@ -259,7 +258,7 @@ Education: {profile.education}"""
         tasks: List[Task] = result_tasks["structured_response"].tasks
         skills: List[Skill] = result_skills["structured_response"].skills
     except (ValidationError, Exception) as e:
-        print(f"Validation Error during extraction: {e}")
+        print("⚠️ Input validation failed (likely invalid/short content). Returning 400.")
         raise HTTPException(
             status_code=400,
             detail={
@@ -386,4 +385,4 @@ Education: {profile.education}"""
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, log_level="debug")
