@@ -370,7 +370,7 @@ export default function HeroSection() {
                               gender: e.target.value,
                             })
                           }
-                          placeholder="e.g., Man, Woman, Non-binary"
+                          placeholder="e.g., Male, Female, Other"
                           className="w-full bg-white/5 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-white/20 transition-all"
                         />
                       </div>
