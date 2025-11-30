@@ -269,7 +269,7 @@ Education: {profile.education}"""
             })
 
     # 2. Automation Analysis (Parallel)
-    semaphore = asyncio.Semaphore(10)
+    semaphore = asyncio.Semaphore(50)
 
     # We gather scores directly instead of creating Analyzed objects
     task_scores_future = asyncio.gather(*[
