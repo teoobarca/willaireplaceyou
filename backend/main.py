@@ -7,9 +7,9 @@ import subprocess
 import traceback
 from contextlib import asynccontextmanager
 from typing import List, Dict, Any, Union, Literal, Optional
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, ValidationError
 import uvicorn
 from langchain_openai import ChatOpenAI
 from langchain.agents import create_agent
@@ -327,10 +327,20 @@ Education: {profile.education}"""
         ]
     }, config={"run_name": "SkillDecompositionAgent"})
     
-    result_tasks, result_skills = await asyncio.gather(task_future, skill_future)
-    
-    tasks: List[Task] = result_tasks["structured_response"].tasks
-    skills: List[Skill] = result_skills["structured_response"].skills
+    try:
+        result_tasks, result_skills = await asyncio.gather(task_future, skill_future)
+        
+        tasks: List[Task] = result_tasks["structured_response"].tasks
+        skills: List[Skill] = result_skills["structured_response"].skills
+    except (ValidationError, Exception) as e:
+        print(f"Validation Error during extraction: {e}")
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error_code": "INVALID_INPUT_CONTENT",
+                "message": "Could not extract meaningful tasks or skills from the provided input. Please ensure the job description and routine are detailed and relevant."
+            }
+        )
     
     # 2. Automation Analysis (Parallel)
     semaphore = asyncio.Semaphore(10)
