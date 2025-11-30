@@ -1,509 +1,436 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 import { InputNode, DecompositionNode, AgentNode, ScoringNode, ScenarioNode } from './Nodes';
 import { Edge } from './Edges';
 
-// Mock Data matching main.py models
+// Utility for class merging
+function cn(...inputs) {
+    return twMerge(clsx(inputs));
+}
+
+// --- MOCK DATA (Psychologist Scenario) ---
 const MOCK_DATA = {
     profile: {
-        age: "25 rokov",
-        gender: "muz",
-        jobTitle: "psycholog",
-        jobDescription: "Pomaham klientom s ich mentalnym stavom na zaklade medziludskej komunikacie.",
-        dailyRoutine: "Skoro rano pridem do prace, citam si diar, pride klient...",
-        location: "kancelaria v Kosiciach",
-        education: "univerzita komenskeho v Bratislave, psychologia"
+        jobTitle: "Psychológ",
+        age: "35 rokov",
+        location: "Bratislava",
+        education: "PhD. Klinická psychológia"
     },
     tasks: [
-        { task_name: "Individuálne terapeutické sedenia", time_share: 0.45, score: 0.15 },
-        { task_name: "Diagnostické rozhovory", time_share: 0.10, score: 0.25 },
-        { task_name: "Vedenie klinickej dokumentácie", time_share: 0.08, score: 0.85 },
-        { task_name: "Príprava terapeutických plánov", time_share: 0.06, score: 0.60 },
+        { task_name: "Diagnostické rozhovory", time_share: 0.30, score: 0.15 },
+        { task_name: "Terapeutické sedenia", time_share: 0.40, score: 0.05 },
+        { task_name: "Analýza a dokumentácia", time_share: 0.20, score: 0.85 },
+        { task_name: "Administratíva", time_share: 0.10, score: 0.95 },
     ],
     skills: [
-        { skill_name: "Aktívne počúvanie", importance: 0.20, score: 0.05 },
-        { skill_name: "Empatická komunikácia", importance: 0.20, score: 0.10 },
-        { skill_name: "Analytické myslenie", importance: 0.15, score: 0.65 },
-        { skill_name: "Práca s dokumentáciou", importance: 0.10, score: 0.90 },
+        { skill_name: "Empatia a aktívne počúvanie", importance: 0.35, score: 0.02 },
+        { skill_name: "Klinická diagnostika", importance: 0.25, score: 0.30 },
+        { skill_name: "Krízová intervencia", importance: 0.20, score: 0.10 },
+        { skill_name: "Analytické myslenie", importance: 0.20, score: 0.70 },
     ],
     scenarios: [
         {
             title: "Hybridný Terapeut",
-            description: "AI preberá administratívu a diagnostiku (30% práce), terapeut sa sústredí na hlbokú intervenciu.",
+            description: "AI preberá 90% administratívy a diagnostiky. Psychológ sa venuje výhradne terapii a krízovým stavom.",
             likelihood: "high"
         },
         {
-            title: "Supervízor AI Agentov",
-            description: "Terapeut manažuje AI, ktorá robí prvotný kontakt a základnú terapiu.",
+            title: "Plne Digitálny Kouč",
+            description: "Pre bežné úzkosti AI nahrádza terapeuta. Ľudský psychológ rieši len najťažšie patológie.",
             likelihood: "medium"
         }
-    ]
+    ],
+    scores: {
+        taskScore: 0.36, // (0.3*0.15 + 0.4*0.05 + 0.2*0.85 + 0.1*0.95) = 0.045 + 0.02 + 0.17 + 0.095 = 0.33 (approx)
+        skillScore: 0.24, // (0.35*0.02 + 0.25*0.30 + 0.20*0.10 + 0.20*0.70) = 0.007 + 0.075 + 0.02 + 0.14 = 0.242
+        finalScore: 0.29  // (0.33 * 0.4) + (0.242 * 0.6) = 0.132 + 0.1452 = 0.277
+    }
 };
 
-// Slide Components
-const IntroSlide = () => (
-    <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8 }}
-        className="text-center max-w-4xl mx-auto"
-    >
-        <h1 className="text-6xl font-bold font-mono text-white mb-6 tracking-tight">
-            AI REPLACABILITY
-            <span className="block text-neon-cyan mt-2">ANALYSIS</span>
-        </h1>
-        <p className="text-xl text-gray-400 font-mono leading-relaxed mb-8">
-            Preskúmajte, ako AI môže ovplyvniť vašu kariéru
-        </p>
-    </motion.div>
-);
+// --- 2. Generic Animated Component ---
+const NodeContainer = ({ children, className, layout, id }) => {
+    // Default layout if undefined
+    const { x = 0, y = 0, opacity = 0, scale = 0.8, zIndex = 0, visible = false } = layout || {};
 
-const OutroSlide = () => (
-    <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8 }}
-        className="text-center max-w-4xl mx-auto"
-    >
-        <h2 className="text-5xl font-bold font-mono text-white mb-6 tracking-tight">
-            BUDÚCNOSŤ JE VO VAŠICH RUKÁCH
-        </h2>
-        <p className="text-xl text-gray-400 font-mono leading-relaxed mb-8">
-            Pripravte sa na zmeny a adaptujte sa na nové technológie
-        </p>
-        <div className="text-sm text-gray-500 font-mono">
-            ← Vráťte sa späť alebo obnovte stránku
-        </div>
-    </motion.div>
-);
+    if (!visible) return null;
+
+    return (
+        <motion.div
+            layoutId={id} // Helps with smooth transitions between states if component stays mounted
+            initial={false}
+            animate={{
+                x,
+                y,
+                opacity,
+                scale,
+                zIndex,
+                translateX: "-50%",
+                translateY: "-50%"
+            }}
+            transition={{
+                duration: 0.8,
+                ease: [0.16, 1, 0.3, 1], // Custom cubic-bezier
+                opacity: { duration: 0.5 }
+            }}
+            className={cn(
+                "absolute top-1/2 left-1/2", // Centering hack
+                className
+            )}
+        >
+            {children}
+        </motion.div>
+    );
+};
+
+// --- 3. Scene Orchestration API ---
+
+const OBJECTS = {
+    INTRO: 'intro',
+    INPUT_FORM: 'input_form',
+    DECOMP_TASKS: 'decomp_tasks',
+    DECOMP_SKILLS: 'decomp_skills',
+    AGENTS_TASKS: 'agents_tasks', // Group of agents for tasks
+    AGENTS_SKILLS: 'agents_skills', // Group of agents for skills
+    SCORING: 'scoring',
+    SCENARIO_1: 'scenario_1',
+    SCENARIO_2: 'scenario_2',
+    OUTRO: 'outro'
+};
+
+const SCENE_CONFIG = {
+    0: { // Intro
+        [OBJECTS.INTRO]: { x: 0, y: 0, opacity: 1, scale: 1.2, zIndex: 10, visible: true },
+        [OBJECTS.INPUT_FORM]: { x: 500, y: 0, opacity: 0, scale: 0.8, visible: false },
+    },
+    1: { // Input Form (User Profile)
+        [OBJECTS.INTRO]: { x: -500, y: 0, opacity: 0, scale: 0.8, visible: false },
+        [OBJECTS.INPUT_FORM]: { x: 0, y: 0, opacity: 1, scale: 1.2, zIndex: 10, visible: true },
+        [OBJECTS.DECOMP_TASKS]: { x: 500, y: -200, opacity: 0, scale: 0.5, visible: false },
+        [OBJECTS.DECOMP_SKILLS]: { x: 500, y: 200, opacity: 0, scale: 0.5, visible: false },
+    },
+    2: { // Decomposition (Input -> Tasks/Skills)
+        [OBJECTS.INPUT_FORM]: { x: -600, y: 0, opacity: 1, scale: 0.8, zIndex: 5, visible: true }, // Moved further left
+        [OBJECTS.DECOMP_TASKS]: { x: 100, y: -250, opacity: 1, scale: 1.1, zIndex: 10, visible: true }, // Adjusted to right
+        [OBJECTS.DECOMP_SKILLS]: { x: 100, y: 250, opacity: 1, scale: 1.1, zIndex: 10, visible: true }, // Adjusted to right
+        [OBJECTS.AGENTS_TASKS]: { x: 500, y: -250, opacity: 0, scale: 0.5, visible: false },
+        [OBJECTS.AGENTS_SKILLS]: { x: 500, y: 250, opacity: 0, scale: 0.5, visible: false },
+    },
+    3: { // Analysis Agents (Tasks/Skills -> Agents)
+        [OBJECTS.INPUT_FORM]: { x: -1000, y: 0, opacity: 0, scale: 0.5, visible: false },
+        [OBJECTS.DECOMP_TASKS]: { x: -600, y: -300, opacity: 0.5, scale: 0.9, zIndex: 5, visible: true }, // Moved further left
+        [OBJECTS.DECOMP_SKILLS]: { x: -600, y: 300, opacity: 0.5, scale: 0.9, zIndex: 5, visible: true }, // Moved further left
+        [OBJECTS.AGENTS_TASKS]: { x: 400, y: -300, opacity: 1, scale: 1.5, zIndex: 10, visible: true }, // Moved further right
+        [OBJECTS.AGENTS_SKILLS]: { x: 400, y: 300, opacity: 1, scale: 1.5, zIndex: 10, visible: true }, // Moved further right
+        [OBJECTS.SCORING]: { x: 600, y: 0, opacity: 0, scale: 0.5, visible: false },
+    },
+    4: { // Scoring (Agents -> Score)
+        [OBJECTS.DECOMP_TASKS]: { x: -1000, y: -250, opacity: 0, scale: 0.5, visible: false },
+        [OBJECTS.DECOMP_SKILLS]: { x: -1000, y: 250, opacity: 0, scale: 0.5, visible: false },
+        [OBJECTS.AGENTS_TASKS]: { x: -500, y: -250, opacity: 0.5, scale: 0.8, zIndex: 5, visible: true }, // Keep left
+        [OBJECTS.AGENTS_SKILLS]: { x: -500, y: 250, opacity: 0.5, scale: 0.8, zIndex: 5, visible: true }, // Keep left
+        [OBJECTS.SCORING]: { x: 300, y: 0, opacity: 1, scale: 1.3, zIndex: 10, visible: true }, // Moved right from 0 to 300
+        [OBJECTS.SCENARIO_1]: { x: 800, y: -150, opacity: 0, scale: 0.5, visible: false },
+        [OBJECTS.SCENARIO_2]: { x: 800, y: 150, opacity: 0, scale: 0.5, visible: false },
+    },
+    5: { // Scenarios (Score -> Scenarios)
+        [OBJECTS.AGENTS_TASKS]: { x: -1000, y: -250, opacity: 0, scale: 0.5, visible: false },
+        [OBJECTS.AGENTS_SKILLS]: { x: -1000, y: 250, opacity: 0, scale: 0.5, visible: false },
+        [OBJECTS.SCORING]: { x: -500, y: 0, opacity: 0.5, scale: 0.8, zIndex: 5, visible: true },
+        [OBJECTS.SCENARIO_1]: { x: 0, y: -180, opacity: 1, scale: 1.1, zIndex: 10, visible: true },
+        [OBJECTS.SCENARIO_2]: { x: 0, y: 180, opacity: 1, scale: 1.1, zIndex: 10, visible: true },
+        [OBJECTS.OUTRO]: { x: 500, y: 0, opacity: 0, scale: 0.5, visible: false },
+    },
+    6: { // Outro
+        [OBJECTS.SCORING]: { x: -1000, y: 0, opacity: 0, scale: 0.5, visible: false },
+        [OBJECTS.SCENARIO_1]: { x: -500, y: -180, opacity: 0, scale: 0.5, visible: false },
+        [OBJECTS.SCENARIO_2]: { x: -500, y: 180, opacity: 0, scale: 0.5, visible: false },
+        [OBJECTS.OUTRO]: { x: 0, y: 0, opacity: 1, scale: 1.2, zIndex: 10, visible: true },
+    }
+};
+
+const TOTAL_STEPS = Object.keys(SCENE_CONFIG).length;
 
 const DataFlow = () => {
-    // Steps: 0: Intro, 1: Input, 2: Decomp, 3: Agents, 4: Scoring, 5: Scenarios, 6: Outro
     const [step, setStep] = useState(0);
-    const TOTAL_STEPS = 6;
+    const layout = SCENE_CONFIG[step];
 
-    // Calculate totals for visualization
-    const totalTaskAutomation = MOCK_DATA.tasks.reduce((acc, t) => acc + (t.time_share * t.score), 0);
-    const totalSkillAutomation = MOCK_DATA.skills.reduce((acc, s) => acc + (s.importance * s.score), 0);
-    const finalScore = (totalTaskAutomation * 0.4) + (totalSkillAutomation * 0.6);
-
-    // Keyboard Navigation
     useEffect(() => {
         const handleKeyDown = (e) => {
-            if (e.key === 'ArrowRight') {
-                setStep(s => Math.min(s + 1, TOTAL_STEPS));
-            } else if (e.key === 'ArrowLeft') {
-                setStep(s => Math.max(s - 1, 0));
-            }
+            if (e.key === 'ArrowRight') setStep(s => Math.min(s + 1, TOTAL_STEPS - 1));
+            if (e.key === 'ArrowLeft') setStep(s => Math.max(s - 1, 0));
         };
-
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, []);
 
-    // Component dimensions (in pixels)
-    const dimensions = {
-        input: { width: 288, height: 150 },      // w-72 = 288px
-        decomposition: { width: 320, height: 250 }, // w-80 = 320px
-        agent: { width: 150, height: 80 },      // Reduced size
-        scoring: { width: 256, height: 200 },    // w-64 = 256px
-        scenario: { width: 320, height: 200 },    // w-80 = 320px
-        gap: 40,                                  // gap between components
-    };
-
-    // Memoized Layout Calculations
-    const layout = useMemo(() => {
-        // Calculate all positions
-        const inputPos = { left: 0, top: -dimensions.input.height / 2 };
-        const tasksPos = { left: dimensions.input.width + dimensions.gap, top: -150 };
-        const skillsPos = { left: dimensions.input.width + dimensions.gap, top: 50 };
-
-        const agentsStartLeft = dimensions.input.width + dimensions.decomposition.width + dimensions.gap * 2;
-
-        // Calculate Vertical stacks for Agents
-        // Task Agents Stack (aligned with Tasks Node)
-        const taskAgentsPos = {
-            left: agentsStartLeft,
-            top: tasksPos.top // Start aligning from top of tasks
-        };
-
-        // Skill Agents Stack (aligned with Skills Node)
-        const skillAgentsPos = {
-            left: agentsStartLeft,
-            top: skillsPos.top // Start aligning from top of skills
-        };
-
-
-        const scoringPos = {
-            left: agentsStartLeft + dimensions.agent.width * 2 + dimensions.gap * 2, // Shifted right
-            top: -dimensions.scoring.height / 2
-        };
-
-        const scenariosPos = {
-            left: scoringPos.left + dimensions.scoring.width + dimensions.gap,
-            top1: -100,
-            top2: 100
-        };
-
-        const totalWidth = scenariosPos.left + dimensions.scenario.width;
-
-        return {
-            inputPos,
-            tasksPos,
-            skillsPos,
-            taskAgentsPos,
-            skillAgentsPos,
-            scoringPos,
-            scenariosPos,
-            totalWidth
-        };
-    }, [dimensions]);
-
-    // Debug logging
+    // Debug log
     useEffect(() => {
-        const viewportWidth = window.innerWidth;
-        const viewportHeight = window.innerHeight;
-
-        console.log('=== DATA FLOW LAYOUT DEBUG ===');
-        console.log('Current Step:', step);
-        console.log('Viewport:', { width: viewportWidth, height: viewportHeight });
-        console.log('Total Diagram Width:', layout.totalWidth);
-        console.log('Centering Offset (X):', (viewportWidth - layout.totalWidth) / 2);
-        console.log('--- Node Positions (relative to container start) ---');
-        console.log('Input Node:', layout.inputPos);
-        console.log('Tasks Node:', layout.tasksPos);
-        console.log('Skills Node:', layout.skillsPos);
-        console.log('Task Agents Start:', layout.taskAgentsPos);
-        console.log('Skill Agents Start:', layout.skillAgentsPos);
-        console.log('Scoring Node:', layout.scoringPos);
-        console.log('Scenarios Start:', layout.scenariosPos.left);
-        console.log('================================================');
+        console.log(`Step ${step} Layout:`, layout);
     }, [step, layout]);
 
+    // --- Dynamic Edge Calculation ---
+    // This function calculates start/end points based on the current SCENE_CONFIG layout
+    // instead of using hardcoded offsets. It assumes approximate node widths.
+    const getEdgeCoordinates = () => {
+        const centerX = window.innerWidth / 2;
+        const centerY = window.innerHeight / 2;
+
+        // Approximate widths for edge anchor points
+        // UPDATED to match new larger sizes in Nodes.jsx
+        const WIDTHS = {
+            [OBJECTS.INPUT_FORM]: 500,
+            [OBJECTS.DECOMP_TASKS]: 500,
+            [OBJECTS.DECOMP_SKILLS]: 500,
+            [OBJECTS.AGENTS_TASKS]: 580, // Grid: 2 columns of 280px + gap
+            [OBJECTS.AGENTS_SKILLS]: 580,
+            [OBJECTS.SCORING]: 450,
+            [OBJECTS.SCENARIO_1]: 500,
+            [OBJECTS.SCENARIO_2]: 500,
+        };
+
+        // Helper to get absolute position of a node's anchor point
+        const getAnchor = (objKey, side) => { // side: 'left' | 'right' | 'top' | 'bottom' | 'center'
+            if (!layout[objKey]) return { x: 0, y: 0 };
+            const nodeX = centerX + layout[objKey].x;
+            const nodeY = centerY + layout[objKey].y;
+            const halfWidth = (WIDTHS[objKey] || 200) / 2;
+            // Scale correction
+            const scale = layout[objKey].scale || 1;
+
+            if (side === 'left') return { x: nodeX - halfWidth * scale, y: nodeY };
+            if (side === 'right') return { x: nodeX + halfWidth * scale, y: nodeY };
+            return { x: nodeX, y: nodeY }; // 'center' or default
+        };
+
+        // Helper to get anchor for specific agent in a grid group (Step 3 specific)
+        // objKey: AGENTS_TASKS or AGENTS_SKILLS
+        // index: 0..3
+        const getAgentAnchor = (objKey, index, side = 'left') => {
+            if (!layout[objKey]) return { x: 0, y: 0 };
+            const containerX = centerX + layout[objKey].x;
+            const containerY = centerY + layout[objKey].y;
+            const scale = layout[objKey].scale || 1;
+
+            // Grid layout params updated for larger sizes
+            // AgentNode compact width = 280px
+            // Gap = 16px (gap-4)
+            // Total Row Width = 280 * 2 + 16 = 576px
+
+            // Offsets from center (unscaled)
+            const col = index % 2; // 0 or 1
+            const row = Math.floor(index / 2); // 0 or 1
+
+            // Width calc:
+            // Col 0 center: -280/2 - 16/2 = -140 - 8 = -148
+            // Col 1 center: +280/2 + 16/2 = +140 + 8 = +148
+            const xOffset = col === 0 ? -148 : 148;
+
+            // Height calc (Assuming AgentNode height approx 100px?):
+            // Let's approximate height with padding as ~120px
+            // Row 0 center: -60 - 8 = -68
+            // Row 1 center: +60 + 8 = +68
+            const yOffset = row === 0 ? -68 : 68;
+
+            // Target the specific side of the specific agent
+            // Agent half width = 140
+            const halfWidth = 140;
+
+            const targetXLocal = side === 'right'
+                ? xOffset + halfWidth
+                : xOffset - halfWidth;
+
+            return {
+                x: containerX + (targetXLocal * scale),
+                y: containerY + (yOffset * scale)
+            };
+        };
+
+        return { getAnchor, getAgentAnchor };
+    };
+
+    const { getAnchor, getAgentAnchor } = getEdgeCoordinates();
+
+    // --- Render Logic ---
     return (
-        <div className="relative w-full h-screen bg-void overflow-hidden">
-            {/* Grid Background - static */}
+        <div className="relative w-full h-screen bg-void overflow-hidden font-mono text-white">
             <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px]" />
 
-            {/* Content Container - centered */}
-            <div className="absolute inset-0 flex items-center justify-center">
-                {/* 
-                    Main Diagram Container 
-                    - Width set to total calculated width
-                    - Height 0 to center vertically (children use negative/positive top relative to center)
-                */}
-                <div
-                    className="relative transition-all duration-500 ease-in-out"
-                    style={{
-                        width: layout.totalWidth,
-                        height: 0 // Height 0 makes this div a horizontal line in the exact vertical center
-                    }}
-                >
-                    {/* Edges */}
-                    <AnimatePresence>
-                        {step >= 2 && step < 6 && (
-                            <>
+            {/* --- Edges Layer (Absolute SVG Overlay) --- */}
+            <div className="absolute inset-0 pointer-events-none">
+                {/* Step 2: Input -> Tasks/Skills */}
+                {step === 2 && (
+                    <>
+                        <Edge
+                            start={getAnchor(OBJECTS.INPUT_FORM, 'right')}
+                            end={getAnchor(OBJECTS.DECOMP_TASKS, 'left')}
+                            active={true}
+                        />
+                        <Edge
+                            start={getAnchor(OBJECTS.INPUT_FORM, 'right')}
+                            end={getAnchor(OBJECTS.DECOMP_SKILLS, 'left')}
+                            active={true}
+                        />
+                    </>
+                )}
+
+                {/* Step 3: Tasks/Skills -> Agents (8 Individual Arrows) */}
+                {step === 3 && (
+                    <>
+                        {/* Arrows for Tasks */}
+                        {MOCK_DATA.tasks.map((_, i) => (
+                            <Edge
+                                key={`edge-task-${i}`}
+                                start={getAnchor(OBJECTS.DECOMP_TASKS, 'right')}
+                                end={getAgentAnchor(OBJECTS.AGENTS_TASKS, i)}
+                                active={true}
+                            />
+                        ))}
+
+                        {/* Arrows for Skills */}
+                        {MOCK_DATA.skills.map((_, i) => (
+                            <Edge
+                                key={`edge-skill-${i}`}
+                                start={getAnchor(OBJECTS.DECOMP_SKILLS, 'right')}
+                                end={getAgentAnchor(OBJECTS.AGENTS_SKILLS, i)}
+                                active={true}
+                            />
+                        ))}
+                    </>
+                )}
+
+                {/* Step 4: Agents -> Scoring (Only Right-Side Arrows) */}
+                {step === 4 && (
+                    <>
+                        {/* Arrows from Task Agents to Scoring */}
+                        {MOCK_DATA.tasks.map((_, i) => {
+                            // Only draw arrows from the right-side agents (odd indices in 2-col grid)
+                            // to avoid lines crossing over the left-side agents.
+                            if (i % 2 === 0) return null;
+
+                            return (
                                 <Edge
-                                    key="edge-input-to-tasks"
-                                    start={{ x: dimensions.input.width / 2, y: 0 }}
-                                    end={{ x: layout.tasksPos.left + dimensions.decomposition.width / 2, y: layout.tasksPos.top + dimensions.decomposition.height / 2 }}
+                                    key={`edge-score-task-${i}`}
+                                    start={getAgentAnchor(OBJECTS.AGENTS_TASKS, i, 'right')}
+                                    end={getAnchor(OBJECTS.SCORING, 'left')}
                                     active={true}
                                 />
+                            );
+                        })}
+
+                        {/* Arrows from Skill Agents to Scoring */}
+                        {MOCK_DATA.skills.map((_, i) => {
+                            if (i % 2 === 0) return null;
+
+                            return (
                                 <Edge
-                                    key="edge-input-to-skills"
-                                    start={{ x: dimensions.input.width / 2, y: 0 }}
-                                    end={{ x: layout.skillsPos.left + dimensions.decomposition.width / 2, y: layout.skillsPos.top + dimensions.decomposition.height / 2 }}
+                                    key={`edge-score-skill-${i}`}
+                                    start={getAgentAnchor(OBJECTS.AGENTS_SKILLS, i, 'right')}
+                                    end={getAnchor(OBJECTS.SCORING, 'left')}
                                     active={true}
                                 />
-                            </>
-                        )}
-                        {step >= 3 && step < 6 && (
-                            <>
-                                {/* Edges from Tasks to Task Agents */}
-                                {MOCK_DATA.tasks.map((task, index) => {
-                                    const row = Math.floor(index / 2);
-                                    const col = index % 2;
-                                    // 2x2 Grid for Task Agents
-                                    const agentX = layout.taskAgentsPos.left + col * (dimensions.agent.width + dimensions.gap) + dimensions.agent.width / 2;
-                                    const agentY = layout.taskAgentsPos.top + row * (dimensions.agent.height + dimensions.gap) + dimensions.agent.height / 2;
+                            );
+                        })}
+                    </>
+                )}
 
-                                    return (
-                                        <Edge
-                                            key={`edge-task-${index}`}
-                                            start={{ x: layout.tasksPos.left + dimensions.decomposition.width, y: layout.tasksPos.top + dimensions.decomposition.height / 2 }}
-                                            end={{ x: agentX, y: agentY }}
-                                            active={true}
-                                        />
-                                    );
-                                })}
-                                {/* Edges from Skills to Skill Agents */}
-                                {MOCK_DATA.skills.map((skill, index) => {
-                                    const row = Math.floor(index / 2);
-                                    const col = index % 2;
-                                    // 2x2 Grid for Skill Agents
-                                    const agentX = layout.skillAgentsPos.left + col * (dimensions.agent.width + dimensions.gap) + dimensions.agent.width / 2;
-                                    const agentY = layout.skillAgentsPos.top + row * (dimensions.agent.height + dimensions.gap) + dimensions.agent.height / 2;
-
-                                    return (
-                                        <Edge
-                                            key={`edge-skill-${index}`}
-                                            start={{ x: layout.skillsPos.left + dimensions.decomposition.width, y: layout.skillsPos.top + dimensions.decomposition.height / 2 }}
-                                            end={{ x: agentX, y: agentY }}
-                                            active={true}
-                                        />
-                                    );
-                                })}
-                            </>
-                        )}
-                        {step >= 4 && step < 6 && (
-                            <>
-                                {/* Edge from Agents to Scoring */}
-                                <Edge
-                                    key="edge-agents-to-scoring"
-                                    start={{ x: layout.taskAgentsPos.left + (dimensions.agent.width * 2 + dimensions.gap), y: 0 }}
-                                    end={{ x: layout.scoringPos.left + dimensions.scoring.width / 2, y: 0 }}
-                                    active={true}
-                                />
-                            </>
-                        )}
-                        {step >= 5 && step < 6 && (
-                            <>
-                                <Edge
-                                    key="edge-scoring-to-scenario1"
-                                    start={{ x: layout.scoringPos.left + dimensions.scoring.width, y: 0 }}
-                                    end={{ x: layout.scenariosPos.left + dimensions.scenario.width / 2, y: layout.scenariosPos.top1 + dimensions.scenario.height / 2 }}
-                                    active={true}
-                                />
-                                <Edge
-                                    key="edge-scoring-to-scenario2"
-                                    start={{ x: layout.scoringPos.left + dimensions.scoring.width, y: 0 }}
-                                    end={{ x: layout.scenariosPos.left + dimensions.scenario.width / 2, y: layout.scenariosPos.top2 + dimensions.scenario.height / 2 }}
-                                    active={true}
-                                />
-                            </>
-                        )}
-                    </AnimatePresence>
-
-                    {/* Intro Slide - animates out to left */}
-                    <AnimatePresence mode="wait">
-                        {step === 0 && (
-                            <motion.div
-                                key="intro"
-                                initial={{ opacity: 1, x: 0 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: -200 }}
-                                transition={{ duration: 0.6, ease: "easeInOut" }}
-                                className="absolute"
-                                style={{ left: '50%', top: 0, transform: 'translateX(-50%)' }} // Centered
-                            >
-                                <div className="relative -top-32"> {/* Shift up a bit */}
-                                    <IntroSlide />
-                                </div>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-
-                    {/* User Profile - appears from right */}
-                    <AnimatePresence>
-                        {step >= 1 && step < 6 && (
-                            <motion.div
-                                key="input"
-                                initial={{ opacity: 0, x: -50 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 0.6, ease: "easeOut" }}
-                                className="absolute"
-                                style={layout.inputPos}
-                            >
-                                <InputNode data={MOCK_DATA.profile} />
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-
-                    {/* Tasks & Skills - appear when step >= 2 */}
-                    <AnimatePresence>
-                        {step >= 2 && step < 6 && (
-                            <>
-                                <motion.div
-                                    key="tasks"
-                                    initial={{ opacity: 0, x: -50 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
-                                    className="absolute"
-                                    style={layout.tasksPos}
-                                >
-                                    <DecompositionNode title="Tasks" items={MOCK_DATA.tasks} type="tasks" />
-                                </motion.div>
-                                <motion.div
-                                    key="skills"
-                                    initial={{ opacity: 0, x: -50 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
-                                    className="absolute"
-                                    style={layout.skillsPos}
-                                >
-                                    <DecompositionNode title="Skills" items={MOCK_DATA.skills} type="skills" />
-                                </motion.div>
-                            </>
-                        )}
-                    </AnimatePresence>
-
-                    {/* AI Agents - 2x2 grid, appears when step >= 3 */}
-                    <AnimatePresence>
-                        {step >= 3 && step < 6 && (
-                            <motion.div
-                                key="agents"
-                                initial={{ opacity: 0, scale: 0.8 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                transition={{ duration: 0.6, ease: "easeOut" }}
-                                className="absolute"
-                                style={{ left: 0, top: 0 }} // Relative to container
-                            >
-                                {/* Task Agents - 2x2 grid positioned near Tasks */}
-                                <div className="absolute" style={{
-                                    left: layout.taskAgentsPos.left,
-                                    top: layout.taskAgentsPos.top,
-                                    width: dimensions.agent.width * 2 + dimensions.gap,
-                                    height: dimensions.agent.height * 2 + dimensions.gap
-                                }}>
-                                    {MOCK_DATA.tasks.map((task, index) => {
-                                        const row = Math.floor(index / 2);
-                                        const col = index % 2;
-                                        return (
-                                            <div
-                                                key={`task-${index}`}
-                                                className="absolute"
-                                                style={{
-                                                    left: col * (dimensions.agent.width + dimensions.gap),
-                                                    top: row * (dimensions.agent.height + dimensions.gap)
-                                                }}
-                                            >
-                                                <AgentNode
-                                                    taskName={task.task_name}
-                                                    status={step >= 4 ? "complete" : "analyzing"}
-                                                    score={task.score}
-                                                    compact={true}
-                                                />
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-
-                                {/* Skill Agents - 2x2 grid positioned near Skills */}
-                                <div className="absolute" style={{
-                                    left: layout.skillAgentsPos.left,
-                                    top: layout.skillAgentsPos.top,
-                                    width: dimensions.agent.width * 2 + dimensions.gap,
-                                    height: dimensions.agent.height * 2 + dimensions.gap
-                                }}>
-                                    {MOCK_DATA.skills.map((skill, index) => {
-                                        const row = Math.floor(index / 2);
-                                        const col = index % 2;
-                                        return (
-                                            <div
-                                                key={`skill-${index}`}
-                                                className="absolute"
-                                                style={{
-                                                    left: col * (dimensions.agent.width + dimensions.gap),
-                                                    top: row * (dimensions.agent.height + dimensions.gap)
-                                                }}
-                                            >
-                                                <AgentNode
-                                                    taskName={skill.skill_name}
-                                                    status={step >= 4 ? "complete" : "analyzing"}
-                                                    score={skill.score}
-                                                    compact={true}
-                                                />
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-
-                    {/* Scoring - appears when step >= 4 */}
-                    <AnimatePresence>
-                        {step >= 4 && step < 6 && (
-                            <motion.div
-                                key="scoring"
-                                initial={{ opacity: 0, scale: 0.8 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                transition={{ duration: 0.6, ease: "easeOut" }}
-                                className="absolute"
-                                style={layout.scoringPos}
-                            >
-                                <ScoringNode
-                                    taskScore={totalTaskAutomation}
-                                    skillScore={totalSkillAutomation}
-                                    finalScore={finalScore}
-                                />
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-
-                    {/* Scenarios - appear when step >= 5 */}
-                    <AnimatePresence>
-                        {step >= 5 && step < 6 && (
-                            <>
-                                <motion.div
-                                    key="scenario1"
-                                    initial={{ opacity: 0, x: 50 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
-                                    className="absolute"
-                                    style={{
-                                        left: layout.scenariosPos.left,
-                                        top: layout.scenariosPos.top1
-                                    }}
-                                >
-                                    <ScenarioNode {...MOCK_DATA.scenarios[0]} />
-                                </motion.div>
-                                <motion.div
-                                    key="scenario2"
-                                    initial={{ opacity: 0, x: 50 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
-                                    className="absolute"
-                                    style={{
-                                        left: layout.scenariosPos.left,
-                                        top: layout.scenariosPos.top2
-                                    }}
-                                >
-                                    <ScenarioNode {...MOCK_DATA.scenarios[1]} />
-                                </motion.div>
-                            </>
-                        )}
-                    </AnimatePresence>
-
-                    {/* Outro Slide - appears when step === 6 */}
-                    <AnimatePresence>
-                        {step === 6 && (
-                            <motion.div
-                                key="outro"
-                                initial={{ opacity: 0, scale: 0.9 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                transition={{ duration: 0.8, ease: "easeOut" }}
-                                className="absolute"
-                                style={{ left: '50%', top: 0, transform: 'translateX(-50%) translateY(-50%)' }}
-                            >
-                                <OutroSlide />
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                </div>
+                {/* Step 5: Scoring -> Scenarios */}
+                {step === 5 && (
+                    <>
+                        <Edge
+                            start={getAnchor(OBJECTS.SCORING, 'right')}
+                            end={getAnchor(OBJECTS.SCENARIO_1, 'left')}
+                            active={true}
+                        />
+                        <Edge
+                            start={getAnchor(OBJECTS.SCORING, 'right')}
+                            end={getAnchor(OBJECTS.SCENARIO_2, 'left')}
+                            active={true}
+                        />
+                    </>
+                )}
             </div>
 
-            {/* Navigation Dots - fixed position */}
-            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-center z-50">
-                <div className="flex gap-1 justify-center">
-                    {[0, 1, 2, 3, 4, 5, 6].map(s => (
-                        <div
-                            key={s}
-                            className={`w-3 h-3 rounded-full transition-colors duration-300 ${step === s ? 'bg-neon-cyan shadow-[0_0_10px_rgba(0,240,255,0.5)]' : step > s ? 'bg-neon-cyan/30' : 'bg-white/10'}`}
-                        />
+
+            {/* --- Nodes Layer --- */}
+
+            {/* 1. Intro */}
+            <NodeContainer layout={layout[OBJECTS.INTRO]} className="w-[600px] border-neon-cyan/20">
+                <h1 className="text-6xl font-bold tracking-tighter mb-4 text-transparent bg-clip-text bg-gradient-to-r from-neon-cyan to-white">
+                    AI REPLACABILITY
+                </h1>
+                <p className="text-xl text-gray-400">Analysis Pipeline</p>
+            </NodeContainer>
+
+            {/* 2. Input Form */}
+            <NodeContainer layout={layout[OBJECTS.INPUT_FORM]} className="">
+                <InputNode data={MOCK_DATA.profile} />
+            </NodeContainer>
+
+            {/* 3. Decomposition Nodes */}
+            <NodeContainer layout={layout[OBJECTS.DECOMP_TASKS]} className="">
+                <DecompositionNode title="Tasks" items={MOCK_DATA.tasks} type="tasks" />
+            </NodeContainer>
+
+            <NodeContainer layout={layout[OBJECTS.DECOMP_SKILLS]} className="">
+                <DecompositionNode title="Skills" items={MOCK_DATA.skills} type="skills" />
+            </NodeContainer>
+
+            {/* 4. Agent Groups */}
+            <NodeContainer layout={layout[OBJECTS.AGENTS_TASKS]} className="w-[600px] !bg-transparent !border-none !shadow-none !p-0">
+                <div className="grid grid-cols-2 gap-4">
+                    {MOCK_DATA.tasks.map((t, i) => (
+                        <AgentNode key={i} taskName={t.task_name} score={t.score} status="complete" compact={true} />
                     ))}
                 </div>
+            </NodeContainer>
+
+            <NodeContainer layout={layout[OBJECTS.AGENTS_SKILLS]} className="w-[600px] !bg-transparent !border-none !shadow-none !p-0">
+                <div className="grid grid-cols-2 gap-4">
+                    {MOCK_DATA.skills.map((s, i) => (
+                        <AgentNode key={i} taskName={s.skill_name} score={s.score} status="complete" compact={true} />
+                    ))}
+                </div>
+            </NodeContainer>
+
+            {/* 5. Scoring */}
+            <NodeContainer layout={layout[OBJECTS.SCORING]} className="">
+                <ScoringNode
+                    taskScore={MOCK_DATA.scores.taskScore}
+                    skillScore={MOCK_DATA.scores.skillScore}
+                    finalScore={MOCK_DATA.scores.finalScore}
+                />
+            </NodeContainer>
+
+            {/* 6. Scenarios */}
+            <NodeContainer layout={layout[OBJECTS.SCENARIO_1]} className="">
+                <ScenarioNode {...MOCK_DATA.scenarios[0]} />
+            </NodeContainer>
+            <NodeContainer layout={layout[OBJECTS.SCENARIO_2]} className="">
+                <ScenarioNode {...MOCK_DATA.scenarios[1]} />
+            </NodeContainer>
+
+            {/* 7. Outro */}
+            <NodeContainer layout={layout[OBJECTS.OUTRO]} className="w-[600px] border-neon-cyan/20">
+                <h2 className="text-5xl font-bold mb-6">FUTURE IS NOW</h2>
+                <p className="text-gray-400">Adapt. Evolve. Overcome.</p>
+            </NodeContainer>
+
+            {/* Navigation Dots */}
+            <div className="absolute bottom-12 flex gap-3 z-50 left-1/2 -translate-x-1/2">
+                {Array.from({ length: TOTAL_STEPS }).map((_, idx) => (
+                    <button
+                        key={idx}
+                        onClick={() => setStep(idx)}
+                        className={cn(
+                            "w-3 h-3 rounded-full transition-all duration-500",
+                            step === idx
+                                ? "bg-neon-cyan w-8 shadow-[0_0_10px_rgba(0,240,255,0.5)]"
+                                : "bg-white/20 hover:bg-white/40"
+                        )}
+                    />
+                ))}
             </div>
         </div>
     );
