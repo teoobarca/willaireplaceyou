@@ -88,7 +88,7 @@ function WhyItExists() {
   return (
     <section
       id="about"
-      className="scroll-mt-[20px] py-24 md:py-40 relative overflow-hidden"
+      className="scroll-mt-[20px] pb-24 md:pb-40 relative overflow-hidden"
     >
       {/* Background gradients */}
 
@@ -137,19 +137,19 @@ function WhyItExists() {
               stat: "85M",
               description: "jobs displaced by automation by 2025",
               icon: TrendingUp,
-              accent: "from-green-500 to-green-500",
+              accent: "from-green-500 to-green-800",
             },
             {
               stat: "97M",
               description: "new roles emerging in AI/tech sectors",
               icon: Sparkles,
-              accent: "from-blue-400 to-purple-500",
+              accent: "from-blue-500 to-blue-800",
             },
             {
               stat: "44%",
               description: "of core skills will change by 2027",
               icon: Zap,
-              accent: "from-blue-500 to-green-500",
+              accent: "from-yellow-500 to-yellow-800",
             },
           ].map((item, index) => {
             const Icon = item.icon;
@@ -199,267 +199,7 @@ function WhyItExists() {
 
 // ============ RESULT PREVIEW ============
 function ResultPreview() {
-  return (
-    <section className="py-32 px-4 relative overflow-hidden">
-      {/* Background Gradients */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl pointer-events-none">
-        <motion.div
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          className="absolute top-20 right-20 w-72 h-72 bg-blue-500/20 rounded-full blur-3xl mix-blend-screen"
-        />
-        <motion.div
-          animate={{
-            scale: [1.2, 1, 1.2],
-            opacity: [0.2, 0.4, 0.2],
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          className="absolute bottom-20 left-20 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl mix-blend-screen"
-        />
-      </div>
-
-      <div className="max-w-5xl mx-auto relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60">
-            Real Analysis of Your Position
-          </h2>
-          <p className="text-xl text-zinc-400">
-            Instant analysis of how AI will impact your profession by 2030
-          </p>
-        </motion.div>
-
-        {/* Mock Interface with glassmorphism */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="relative group"
-        >
-          <div className="absolute -inset-1 bg-gradient-to-r from-purple-600/30 to-blue-600/30 rounded-3xl blur-xl opacity-40 group-hover:opacity-70 transition duration-1000"></div>
-          <div className="relative rounded-3xl bg-white/5 backdrop-blur-2xl border border-white/20 overflow-hidden shadow-[0_8px_32px_0_rgba(31,38,135,0.37)]">
-            {/* Mock Header */}
-            <div className="border-b border-white/10 p-4 flex items-center gap-4 bg-white/5">
-              <div className="flex gap-2">
-                <div className="w-3 h-3 rounded-full bg-red-500/40 border border-red-500/60" />
-                <div className="w-3 h-3 rounded-full bg-yellow-500/40 border border-yellow-500/60" />
-                <div className="w-3 h-3 rounded-full bg-green-500/40 border border-green-500/60" />
-              </div>
-              <div className="h-6 w-64 bg-white/10 backdrop-blur-md rounded-full border border-white/20" />
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-8 p-8">
-              {/* Profile Card */}
-              <div className="md:col-span-1 space-y-6">
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.3 }}
-                  className="relative rounded-2xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 backdrop-blur-md border border-white/20 p-6 overflow-hidden"
-                >
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/20 rounded-full blur-3xl" />
-                  <div className="relative z-10">
-                    <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-purple-400 to-blue-400 flex items-center justify-center mb-4 shadow-lg">
-                      <Code2
-                        className="w-10 h-10 text-white"
-                        strokeWidth={2.5}
-                      />
-                    </div>
-                    <h3 className="text-2xl font-bold text-white mb-1">
-                      Software Developer
-                    </h3>
-                    <p className="text-sm text-zinc-400 mb-4">
-                      Full-stack Engineer
-                    </p>
-
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-zinc-400">
-                          Automation Risk
-                        </span>
-                        <span className="text-lg font-bold text-yellow-400">
-                          42%
-                        </span>
-                      </div>
-                      <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
-                        <motion.div
-                          initial={{ width: 0 }}
-                          whileInView={{ width: "42%" }}
-                          viewport={{ once: true }}
-                          transition={{
-                            duration: 1.5,
-                            delay: 0.5,
-                            ease: "easeOut",
-                          }}
-                          className="h-full bg-gradient-to-r from-yellow-400 to-orange-400"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.7 }}
-                  className="p-4 rounded-xl bg-yellow-500/10 backdrop-blur-md border border-yellow-500/30 flex items-start gap-3"
-                >
-                  <AlertTriangle className="w-5 h-5 text-yellow-400 shrink-0 mt-0.5" />
-                  <div>
-                    <div className="font-medium text-yellow-200 text-sm">
-                      Medium Risk
-                    </div>
-                    <div className="text-xs text-yellow-300/70 mt-1">
-                      AI tools can already generate basic code. By 2030, the
-                      ability to work with AI will be crucial.
-                    </div>
-                  </div>
-                </motion.div>
-              </div>
-
-              {/* Analysis Details */}
-              <div className="md:col-span-2 space-y-6">
-                <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-white flex items-center gap-2">
-                    <Activity className="w-5 h-5 text-blue-400" />
-                    Task Breakdown & AI Potential
-                  </h3>
-
-                  <div className="space-y-3">
-                    {[
-                      {
-                        label: "Writing boilerplate code",
-                        score: 85,
-                        color: "bg-red-500",
-                        impact: "Copilot, ChatGPT already handle this",
-                      },
-                      {
-                        label: "Debugging & testing",
-                        score: 65,
-                        color: "bg-orange-500",
-                        impact: "AI helps, but needs human oversight",
-                      },
-                      {
-                        label: "System architecture",
-                        score: 30,
-                        color: "bg-yellow-500",
-                        impact: "Requires experience and strategy",
-                      },
-                      {
-                        label: "Team collaboration & mentoring",
-                        score: 10,
-                        color: "bg-green-500",
-                        impact: "Human interaction irreplaceable",
-                      },
-                    ].map((item, index) => (
-                      <motion.div
-                        key={item.label}
-                        initial={{ opacity: 0, x: 20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.5, delay: 0.8 + index * 0.1 }}
-                        className="group/item p-4 rounded-xl bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all"
-                      >
-                        <div className="flex justify-between text-sm mb-2">
-                          <span className="text-zinc-300 font-medium">
-                            {item.label}
-                          </span>
-                          <span className="text-zinc-400">
-                            {item.score}% AI Ready
-                          </span>
-                        </div>
-                        <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden backdrop-blur-sm mb-2">
-                          <motion.div
-                            initial={{ width: 0 }}
-                            whileInView={{ width: `${item.score}%` }}
-                            viewport={{ once: true }}
-                            transition={{
-                              duration: 1,
-                              delay: 1 + index * 0.1,
-                              ease: "easeOut",
-                            }}
-                            className={`h-full ${item.color}`}
-                          />
-                        </div>
-                        <p className="text-xs text-zinc-500">{item.impact}</p>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="pt-6 border-t border-white/10">
-                  <h3 className="text-lg font-medium text-white flex items-center gap-2 mb-4">
-                    <Zap className="w-5 h-5 text-yellow-400" />
-                    Required Skills for the Future
-                  </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {[
-                      {
-                        skill: "AI Prompt Engineering",
-                        desc: "Learn to communicate effectively with AI",
-                      },
-                      {
-                        skill: "AI-Assisted Development",
-                        desc: "GitHub Copilot, ChatGPT in practice",
-                      },
-                      {
-                        skill: "System Design & Architecture",
-                        desc: "High-level decision making",
-                      },
-                      {
-                        skill: "Cloud & DevOps",
-                        desc: "Infrastructure and automation",
-                      },
-                    ].map((item, index) => (
-                      <motion.div
-                        key={item.skill}
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.3, delay: 1.2 + index * 0.1 }}
-                        className="p-3 rounded-xl bg-gradient-to-br from-green-500/10 to-emerald-500/10 backdrop-blur-md border border-green-500/30 hover:border-green-500/50 transition-all group/skill"
-                      >
-                        <div className="flex items-start gap-2">
-                          <CheckCircle2 className="w-4 h-4 text-green-400 shrink-0 mt-0.5" />
-                          <div>
-                            <div className="text-sm font-medium text-green-300 mb-1">
-                              {item.skill}
-                            </div>
-                            <div className="text-xs text-green-400/60">
-                              {item.desc}
-                            </div>
-                          </div>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      </div>
-    </section>
-  );
+  return;
 }
 
 // ============ HOW IT WORKS ============
@@ -532,9 +272,6 @@ function HowItWorks() {
             <h2 className="text-4xl md:text-5xl lg:text-7xl font-bold mb-4 md:mb-6 tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60">
               How It Works
             </h2>
-            <p className="text-lg md:text-xl text-zinc-400">
-              The path to future-proofing your career
-            </p>
           </div>
 
           {/* MOBILE VIEW */}
