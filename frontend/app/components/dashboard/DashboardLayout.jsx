@@ -32,7 +32,6 @@ export default function DashboardLayout({
     { name: "Skills", icon: Lightbulb, href: "/dashboard/skills" },
     { name: "Jobs", icon: Briefcase, href: "/dashboard/jobs" },
     { name: "Market Analytics", icon: Store, href: "/dashboard/market" },
-    { name: "Roadmap", icon: Calendar, href: "/dashboard/roadmap" },
   ];
 
   return (
