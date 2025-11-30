@@ -1,46 +1,55 @@
-# STVOREC-02
+<div align="center">
+  <a href="https://willaireplace.you/">
+    <img src="assets/banner.png" alt="willaireplace.you Banner" style="border-radius: 15px; width: 70%;" />
+  </a>
+</div>
 
-![Banner](assets/banner.png)
+<br />
 
-> **Future-proof your career with data-driven insights.**
+<div align="center">
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![Next.js](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.109+-009688.svg)](https://fastapi.tiangolo.com/)
+  **The future demands preparation, not panic.**
+
+  [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+  [![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+  [![Next.js](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org/)
+  [![FastAPI](https://img.shields.io/badge/FastAPI-0.109+-009688.svg)](https://fastapi.tiangolo.com/)
+
+</div>
 
 ## 📖 About The Project
 
-**STVOREC-02** is an advanced analytical tool designed to evaluate the resilience of various professions against the rising tide of Artificial Intelligence. 
+[**willaireplace.you**](https://willaireplace.you) is your career compass for the future of work. In an age where job markets shift in months and skills become obsolete overnight, we provide clarity and strategy.
 
-In an era of uncertainty, we provide clarity. By leveraging state-of-the-art Large Language Models (LLMs) and complex agentic workflows, STVOREC-02 decomposes job roles into their fundamental atomic units—tasks and skills—to provide a granular automation risk assessment.
+By leveraging state-of-the-art Large Language Models (LLMs) and complex agentic workflows, we decompose job roles into their fundamental atomic units—tasks and skills—to provide a granular automation risk assessment.
 
-It doesn't just predict the future; it helps you navigate it.
+**We help you navigate the transition from "Will AI replace me?" to "How can I become unreplaceable?"**
 
 ### Key Features
 
-*   **🔍 Deep Role Decomposition**: Breaks down any job title into granular tasks and skills for precise analysis.
-*   **🤖 AI Automation Scoring**: Calculates a weighted automation potential score based on current AI capabilities (powered by GPT-5.1).
-*   **🔮 Future Scenario Generation**: Simulates potential industry shifts by 2030, offering best, worst, and most likely case scenarios.
-*   **🧭 Strategic Career Pivots**: Identifies transferable skills and recommends viable career transitions to maximize long-term relevance.
+*   **🔍 Real Analysis of Your Position**: Instant analysis of how AI will impact your specific profession by 2030.
+*   **🤖 Task Breakdown & AI Potential**: Our engine breaks down your role into tasks and evaluates current AI capabilities against them.
+*   **🔮 Future Scenarios**: Discover your career's future with best, worst, and most likely case scenarios.
+*   **🧭 Strategic Upskilling**: Receive a personalized roadmap with risk scores and actionable recommendations to future-proof your career.
 
 ---
 
 ## 🛠️ Tech Stack
 
-This project is built with a modern, high-performance stack designed for scalability and real-time analysis.
+Built with a modern, high-performance stack designed for scalability, real-time analysis, and a premium user experience.
 
 ### Backend
 *   **Python 3.11+**: Core logic and data processing.
 *   **FastAPI**: High-performance async web framework.
-*   **LangChain**: Orchestration of complex AI agent workflows.
+*   **LangChain & LangGraph**: Orchestration of complex AI agent workflows.
 *   **OpenAI GPT-5.1**: The underlying intelligence engine.
 
 ### Frontend
 *   **Next.js 16**: React framework for production-grade applications.
-*   **Tailwind CSS 4**: Utility-first CSS framework for rapid UI development.
-*   **Framer Motion**: Production-ready motion library for React.
-*   **OGL**: Minimal WebGL library for immersive visual effects.
+*   **React 19**: Leveraging the latest React features.
+*   **Tailwind CSS 4**: Utility-first CSS framework for rapid, modern UI development.
+*   **Framer Motion**: Production-ready motion library for immersive animations.
+*   **OGL**: Minimal WebGL library for stunning visual effects.
 
 ---
 
@@ -99,11 +108,10 @@ The application will be available at `http://localhost:3000`.
 
 ## 💡 Usage
 
-1.  Open the application in your browser.
-2.  Enter your current job title and description.
-3.  Wait for the AI agents to decompose and analyze your role.
-4.  Review your **Automation Score** and explore the **Future Scenarios**.
-5.  Check the **Recommendations** tab for suggested upskilling paths.
+1.  Open the application at `http://localhost:3000`.
+2.  **Enter Your Profession**: Type in your current job title.
+3.  **AI Analysis Engine**: Watch as our agents decompose your role.
+4.  **Get Your Strategy**: Review your Automation Score and explore your personalized upskilling roadmap.
 
 ---
 

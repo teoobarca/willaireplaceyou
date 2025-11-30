@@ -14,10 +14,7 @@ import uvicorn
 from langchain_openai import ChatOpenAI
 from langchain.agents import create_agent
 from langchain.agents.structured_output import ProviderStrategy
-from langchain_core.tools import tool
-from langchain_core.messages import SystemMessage, HumanMessage, ToolMessage, AIMessage
-from langchain_mcp_adapters.client import MultiServerMCPClient
-from dotenv import load_dotenv
+from langchain_core.messages import SystemMessage, HumanMessage, BaseMessage
 from prompts import (
     TASKS_DECOMPOSITION_SYSTEM_PROMPT, 
     TASKS_REPLACABILITY_SYSTEM_PROMPT,
@@ -27,6 +24,17 @@ from prompts import (
     CAREER_RECOMMENDATIONS_SYSTEM_PROMPT,
     ROADMAP_GENERATION_PROMPT
 )
+
+load_dotenv()
+
+# --- Helper Functions for Content Blocks ---
+def get_text_content(message: BaseMessage) -> str:
+    """
+    Extracts text content from a message using standard content blocks.
+    """
+    if hasattr(message, "content_blocks"):
+        return "".join([content_block.get("text", "") for content_block in message.content_blocks if content_block.get("type") == "text"])
+    return message.content if isinstance(message.content, str) else ""
 
 # --- Local Validation Function using Mermaid CLI ---
 async def validate_mermaid_code_local(code: str) -> tuple[bool, str]:
@@ -45,51 +53,30 @@ async def validate_mermaid_code_local(code: str) -> tuple[bool, str]:
     if "```" in code:
         return False, "Code contains markdown fences (```). Please output ONLY the raw code."
 
-    # Create a temporary file for the mermaid code
-    with tempfile.NamedTemporaryFile(mode='w+', suffix='.mmd', delete=False) as tmp_mmd:
-        tmp_mmd.write(code)
-        tmp_mmd_path = tmp_mmd.name
-
-    # Create a temporary path for the output (we don't actually need it, just for mmdc to run)
-    tmp_svg_path = tmp_mmd_path.replace('.mmd', '.svg')
-
     try:
-        # Run mmdc
-        # mmdc -i input.mmd -o output.svg
+        # Run mmdc with stdin input and stdout output to avoid temporary files
         process = await asyncio.create_subprocess_exec(
-            "mmdc", "-i", tmp_mmd_path, "-o", tmp_svg_path,
+            "mmdc", "-i", "-", "-o", "-",
+            stdin=asyncio.subprocess.PIPE,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE
         )
         
-        stdout, stderr = await process.communicate()
+        # Pass code via stdin
+        stdout, stderr = await process.communicate(input=code.encode())
         
         if process.returncode == 0:
             return True, ""
         else:
             error_msg = stderr.decode().strip()
-            # Clean up the error message slightly if it's too verbose
             return False, f"Mermaid Compiler Error:\n{error_msg}"
 
     except FileNotFoundError:
         return False, "Mermaid CLI (mmdc) not found. Please ensure it is installed globally via 'npm install -g @mermaid-js/mermaid-cli'."
     except Exception as e:
         return False, f"Unexpected error running validation: {str(e)}"
-    finally:
-        # Cleanup
-        if os.path.exists(tmp_mmd_path):
-            os.unlink(tmp_mmd_path)
-        if os.path.exists(tmp_svg_path):
-            os.unlink(tmp_svg_path)
 
-load_dotenv()
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # We don't need the MCP client anymore for this workflow
-    yield
-
-app = FastAPI(lifespan=lifespan)
+app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
@@ -148,7 +135,7 @@ class FutureScenario(BaseModel):
     likelihood: Literal["low", "medium", "high"] = Field(description="Estimated likelihood: Low, Medium, High")
 
 class FutureScenarios(BaseModel):
-    scenarios: List[FutureScenario] = Field(description="List of 1 to 3 different future scenarios", min_length=1, max_length=3)
+    scenarios: List[FutureScenario] = Field(description="List of 1 to 5 different future scenarios", min_length=1, max_length=5)
 
 # --- New Models for Two-Step Process ---
 class CareerOptionInitial(BaseModel):
@@ -191,7 +178,7 @@ async def generate_roadmap_with_local_loop(job_title: str, job_context: str) -> 
         
         # Invoke LLM
         response = await llm.ainvoke(messages, config={"run_name": f"RoadmapGen_Attempt_{attempt}"})
-        content = response.content.strip()
+        content = get_text_content(response).strip()
         
         # --- CLEANUP: Handle JSON-wrapped output or fences ---
         mermaid_code = content
@@ -216,7 +203,7 @@ async def generate_roadmap_with_local_loop(job_title: str, job_context: str) -> 
         mermaid_code = mermaid_code.strip()
         
         # Add the raw response to history so the LLM knows what it generated
-        messages.append(AIMessage(content=content)) 
+        messages.append(response) 
         
         # Validate Locally using mmdc
         is_valid, error_msg = await validate_mermaid_code_local(mermaid_code)
@@ -282,8 +269,8 @@ async def evaluate_automation_potential(
             """
         
         messages = [
-            ("system", system_prompt),
-            ("human", user_prompt)
+            SystemMessage(content=system_prompt),
+            HumanMessage(content=user_prompt)
         ]
         
         analysis = await structured_llm.ainvoke(messages, config={"run_name": f"{item_type.capitalize()}AutomationEvaluator"})
@@ -315,15 +302,15 @@ Education: {profile.education}"""
     
     task_future = agent_tasks.ainvoke({
         "messages": [
-            ("system", TASKS_DECOMPOSITION_SYSTEM_PROMPT),
-            ("human", f"User Profile:\n{job_context}")
+            SystemMessage(content=TASKS_DECOMPOSITION_SYSTEM_PROMPT),
+            HumanMessage(content=f"User Profile:\n{job_context}")
         ]
     }, config={"run_name": "TaskDecompositionAgent"})
     
     skill_future = agent_skills.ainvoke({
         "messages": [
-            ("system", SKILLS_DECOMPOSITION_SYSTEM_PROMPT),
-            ("human", f"User Profile:\n{job_context}")
+            SystemMessage(content=SKILLS_DECOMPOSITION_SYSTEM_PROMPT),
+            HumanMessage(content=f"User Profile:\n{job_context}")
         ]
     }, config={"run_name": "SkillDecompositionAgent"})
     
@@ -416,15 +403,15 @@ Education: {profile.education}"""
     # Launch scenarios and initial careers concurrently
     scenarios_future = agent_scenarios.ainvoke({
         "messages": [
-            ("system", SCENARIO_GENERATION_SYSTEM_PROMPT),
-            ("human", f"Full Job Analysis Data:\n{analysis_summary_json}")
+            SystemMessage(content=SCENARIO_GENERATION_SYSTEM_PROMPT),
+            HumanMessage(content=f"Full Job Analysis Data:\n{analysis_summary_json}")
         ]
     }, config={"run_name": "FutureScenariosAgent"})
     
     careers_initial_future = agent_careers_initial.ainvoke({
         "messages": [
-            ("system", CAREER_RECOMMENDATIONS_SYSTEM_PROMPT),
-            ("human", f"Full Job Analysis Data:\n{analysis_summary_json}")
+            SystemMessage(content=CAREER_RECOMMENDATIONS_SYSTEM_PROMPT),
+            HumanMessage(content=f"Full Job Analysis Data:\n{analysis_summary_json}")
         ]
     }, config={"run_name": "CareerRecommendationsAgent"})
     
