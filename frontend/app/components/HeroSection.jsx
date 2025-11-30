@@ -117,7 +117,7 @@ export default function HeroSection() {
       setError(null);
       window.scrollTo({ top: 0, behavior: "smooth" });
 
-      const response = await fetch("http://localhost:8000/analyze", {
+const response = await fetch(process.env.API_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
