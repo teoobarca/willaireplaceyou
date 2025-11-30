@@ -15,7 +15,7 @@ from langchain_openai import ChatOpenAI
 from langchain.agents import create_agent
 from langchain.agents.structured_output import ProviderStrategy
 from langchain_core.tools import tool
-from langchain_core.messages import SystemMessage, HumanMessage, ToolMessage, AIMessage
+from langchain_core.messages import SystemMessage, HumanMessage, ToolMessage, AIMessage, BaseMessage
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from dotenv import load_dotenv
 from prompts import (
@@ -27,6 +27,15 @@ from prompts import (
     CAREER_RECOMMENDATIONS_SYSTEM_PROMPT,
     ROADMAP_GENERATION_PROMPT
 )
+
+# --- Helper Functions for Content Blocks ---
+def get_text_content(message: BaseMessage) -> str:
+    """
+    Extracts text content from a message using standard content blocks.
+    """
+    if hasattr(message, "content_blocks"):
+        return "".join([content_block.get("text", "") for content_block in message.content_blocks if content_block.get("type") == "text"])
+    return message.content if isinstance(message.content, str) else ""
 
 # --- Local Validation Function using Mermaid CLI ---
 async def validate_mermaid_code_local(code: str) -> tuple[bool, str]:
@@ -191,7 +200,7 @@ async def generate_roadmap_with_local_loop(job_title: str, job_context: str) -> 
         
         # Invoke LLM
         response = await llm.ainvoke(messages, config={"run_name": f"RoadmapGen_Attempt_{attempt}"})
-        content = response.content.strip()
+        content = get_text_content(response).strip()
         
         # --- CLEANUP: Handle JSON-wrapped output or fences ---
         mermaid_code = content
@@ -216,7 +225,7 @@ async def generate_roadmap_with_local_loop(job_title: str, job_context: str) -> 
         mermaid_code = mermaid_code.strip()
         
         # Add the raw response to history so the LLM knows what it generated
-        messages.append(AIMessage(content=content)) 
+        messages.append(response) 
         
         # Validate Locally using mmdc
         is_valid, error_msg = await validate_mermaid_code_local(mermaid_code)
@@ -282,8 +291,8 @@ async def evaluate_automation_potential(
             """
         
         messages = [
-            ("system", system_prompt),
-            ("human", user_prompt)
+            SystemMessage(content=system_prompt),
+            HumanMessage(content=user_prompt)
         ]
         
         analysis = await structured_llm.ainvoke(messages, config={"run_name": f"{item_type.capitalize()}AutomationEvaluator"})
@@ -315,15 +324,15 @@ Education: {profile.education}"""
     
     task_future = agent_tasks.ainvoke({
         "messages": [
-            ("system", TASKS_DECOMPOSITION_SYSTEM_PROMPT),
-            ("human", f"User Profile:\n{job_context}")
+            SystemMessage(content=TASKS_DECOMPOSITION_SYSTEM_PROMPT),
+            HumanMessage(content=f"User Profile:\n{job_context}")
         ]
     }, config={"run_name": "TaskDecompositionAgent"})
     
     skill_future = agent_skills.ainvoke({
         "messages": [
-            ("system", SKILLS_DECOMPOSITION_SYSTEM_PROMPT),
-            ("human", f"User Profile:\n{job_context}")
+            SystemMessage(content=SKILLS_DECOMPOSITION_SYSTEM_PROMPT),
+            HumanMessage(content=f"User Profile:\n{job_context}")
         ]
     }, config={"run_name": "SkillDecompositionAgent"})
     
@@ -406,15 +415,15 @@ Education: {profile.education}"""
     # Launch scenarios and initial careers concurrently
     scenarios_future = agent_scenarios.ainvoke({
         "messages": [
-            ("system", SCENARIO_GENERATION_SYSTEM_PROMPT),
-            ("human", f"Full Job Analysis Data:\n{analysis_summary_json}")
+            SystemMessage(content=SCENARIO_GENERATION_SYSTEM_PROMPT),
+            HumanMessage(content=f"Full Job Analysis Data:\n{analysis_summary_json}")
         ]
     }, config={"run_name": "FutureScenariosAgent"})
     
     careers_initial_future = agent_careers_initial.ainvoke({
         "messages": [
-            ("system", CAREER_RECOMMENDATIONS_SYSTEM_PROMPT),
-            ("human", f"Full Job Analysis Data:\n{analysis_summary_json}")
+            SystemMessage(content=CAREER_RECOMMENDATIONS_SYSTEM_PROMPT),
+            HumanMessage(content=f"Full Job Analysis Data:\n{analysis_summary_json}")
         ]
     }, config={"run_name": "CareerRecommendationsAgent"})
     
