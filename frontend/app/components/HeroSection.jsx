@@ -41,7 +41,6 @@ export default function HeroSection() {
 
   const jobsToRotate = [
     "Teachers?",
-    "Designers?",
     "Lawyers?",
     "Drivers?",
     "Doctors?",
@@ -220,7 +219,7 @@ export default function HeroSection() {
               <div className="max-w-4xl mx-auto text-center">
                 <div className="inline-flex items-center gap-2 px-3 py-1 mt-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-sm text-zinc-300 mb-8 shadow-lg">
                   <Sparkles className="w-4 h-4 text-blue-400" />
-                  <span>Afnalyze your profession</span>
+                  <span>Analyze your profession</span>
                 </div>
 
                 <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60">
@@ -435,7 +434,7 @@ export default function HeroSection() {
                       {/* Daily Routine */}
                       <div>
                         <label className="block text-sm font-medium text-zinc-300 mb-1.5">
-                          Daily Routine
+                          Work Daily Routine
                         </label>
                         <textarea
                           value={formData.dailyRoutine}
@@ -454,7 +453,7 @@ export default function HeroSection() {
                       {/* Location */}
                       <div>
                         <label className="block text-sm font-medium text-zinc-300 mb-1.5">
-                          Location
+                          Workspace
                         </label>
                         <input
                           type="text"
@@ -473,7 +472,7 @@ export default function HeroSection() {
                       {/* Education */}
                       <div>
                         <label className="block text-sm font-medium text-zinc-300 mb-1.5">
-                          Education
+                          Education and Hobbies
                         </label>
                         <input
                           type="text"

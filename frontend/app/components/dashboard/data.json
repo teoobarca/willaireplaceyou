@@ -1,0 +1,304 @@
+{
+  "meta": {
+    "title": "Job Market Graphs & Analytics",
+    "subtitle": "Trends 2025–2030",
+    "currency": "global/indexed",
+    "indexExplanation": "Indexes are normalized 0–100 scores built from direction and magnitude in major labour-market studies (WEF, IMF, OECD, McKinsey). They are meant for visualisation, not as exact official numbers.",
+    "period": {
+      "startYear": 2025,
+      "endYear": 2030
+    },
+    "sources": [
+      {
+        "id": "WEF_FoJ_2023",
+        "label": "World Economic Forum – Future of Jobs Report 2023",
+        "type": "report",
+        "url": "https://www.weforum.org/publications/the-future-of-jobs-report-2023",
+        "keyFindings": {
+          "jobsCovered_m": 673,
+          "jobsCreated_m": 69,
+          "jobsDestroyed_m": 83,
+          "netJobsChange_m": -14,
+          "jobsShareChanging_pct": 23
+        }
+      },
+      {
+        "id": "WEF_FoJ_2025",
+        "label": "World Economic Forum – Future of Jobs Report 2025",
+        "type": "report",
+        "url": "https://reports.weforum.org/docs/WEF_Future_of_Jobs_Report_2025.pdf",
+        "keyFindingsNote": "Extends Future of Jobs dataset to 2030; used for qualitative direction of sector/role changes."
+      },
+      {
+        "id": "IMF_GenAI_2024",
+        "label": "IMF – Gen-AI: Artificial Intelligence and the Future of Work (2024)",
+        "type": "report",
+        "url": "https://www.imf.org/en/publications/staff-discussion-notes/issues/2024/01/14/gen-ai-artificial-intelligence-and-the-future-of-work-542379",
+        "keyFindings": {
+          "globalJobsExposed_pct": 40,
+          "advancedEconomiesExposed_pct": 60,
+          "emergingMarketsExposed_pct": 40,
+          "lowIncomeCountriesExposed_pct": 26
+        }
+      },
+      {
+        "id": "OECD_EO_2023",
+        "label": "OECD – Employment Outlook 2023: Artificial Intelligence and the Labour Market",
+        "type": "report",
+        "url": "https://www.oecd.org/en/publications/oecd-employment-outlook-2023_08785bba-en.html",
+        "keyFindings": {
+          "jobsHighAutomationRisk_pct": 27
+        }
+      },
+      {
+        "id": "McK_FutureOfWork_2024",
+        "label": "McKinsey Global Institute – A new future of work (2024)",
+        "type": "report",
+        "url": "https://www.mckinsey.com/mgi/our-research/a-new-future-of-work-the-race-to-deploy-ai-and-raise-skills-in-europe-and-beyond",
+        "keyFindings": {
+          "hoursAutomatedEurope_2030_pct": 27,
+          "hoursAutomatedUS_2030_pct": 30,
+          "hoursAutomatedWithoutGenAI_pct": 20
+        }
+      }
+    ]
+  },
+
+  "globalStats": {
+    "jobChurn_2023_2027": {
+      "jobsShareChanging_pct": 23,
+      "jobsCreated_m": 69,
+      "jobsDestroyed_m": 83,
+      "netJobsChange_m": -14,
+      "sourceId": "WEF_FoJ_2023"
+    },
+    "aiExposure_global": {
+      "globalJobsExposed_pct": 40,
+      "advancedEconomiesExposed_pct": 60,
+      "emergingMarketsExposed_pct": 40,
+      "lowIncomeCountriesExposed_pct": 26,
+      "sourceId": "IMF_GenAI_2024"
+    },
+    "automationRisk_OECD": {
+      "jobsHighAutomationRisk_pct": 27,
+      "sourceId": "OECD_EO_2023"
+    },
+    "hoursAutomated_2030": {
+      "europe_pct": 27,
+      "us_pct": 30,
+      "withoutGenAIBaseline_pct": 20,
+      "sourceId": "McK_FutureOfWork_2024"
+    }
+  },
+
+  "charts": {
+    "aiAdaptedRoleOutlook": {
+      "id": "aiAdaptedRoleOutlook",
+      "title": "AI-Adapted Role Outlook",
+      "description": "Index of jobs that are AI-exposed but expected to grow because workers are augmented rather than fully replaced.",
+      "yLabel": "Index (2025 = 100)",
+      "sourceIds": [
+        "WEF_FoJ_2023",
+        "WEF_FoJ_2025",
+        "IMF_GenAI_2024",
+        "OECD_EO_2023",
+        "McK_FutureOfWork_2024"
+      ],
+      "data": [
+        {
+          "year": 2025,
+          "value": 100,
+          "note": "Baseline: early broad deployment of gen-AI tools in firms."
+        },
+        {
+          "year": 2026,
+          "value": 104,
+          "note": "More sectors start integrating AI into workflows and upskilling workers."
+        },
+        {
+          "year": 2027,
+          "value": 108,
+          "note": "Around quarter of jobs have changed; AI-exposed roles increasingly redesigned."
+        },
+        {
+          "year": 2028,
+          "value": 113,
+          "note": "Complementary AI use boosts demand for specialised digital/AI roles."
+        },
+        {
+          "year": 2029,
+          "value": 119,
+          "note": "Scaling of automation in back-office tasks; front-office human-plus-AI roles expand."
+        },
+        {
+          "year": 2030,
+          "value": 125,
+          "note": "Up to ~30% of hours potentially automated in advanced economies; net effect is more AI-adapted roles."
+        }
+      ]
+    },
+
+    "employmentBySector": {
+      "id": "employmentBySector",
+      "title": "Employment Heatmap by Sector",
+      "unit": "growth_score_0_100",
+      "legend": {
+        "score50": "Neutral outlook vs. current employment",
+        "scoreAbove50": "Net growth by 2030 (dopyt po ľuďoch)",
+        "scoreBelow50": "Net decline / shrinking headcount",
+        "colorHints": {
+          "green": "Growing",
+          "yellow": "Mixed / redistributing",
+          "red": "Declining"
+        }
+      },
+      "rows": [
+        {
+          "sectorId": "it_tech",
+          "label": "IT & Tech",
+          "score": 85,
+          "direction": "up",
+          "colorHint": "green",
+          "aiExposure": "very_high",
+          "notes": "Rast AI, softvéru, dát a cybersecurity; vysoká expozícia AI, ale väčšinou komplementárna."
+        },
+        {
+          "sectorId": "healthcare",
+          "label": "Healthcare",
+          "score": 72,
+          "direction": "up",
+          "colorHint": "green",
+          "aiExposure": "medium",
+          "notes": "Starnutie populácie, viac care jobs; AI pomáha diagnostike, nie full náhrada ľudí."
+        },
+        {
+          "sectorId": "finance",
+          "label": "Finance",
+          "score": 45,
+          "direction": "mixed",
+          "colorHint": "yellow",
+          "aiExposure": "high",
+          "notes": "Back-office a základné analytické roly sú silno automatizovateľné; high-end risk/compliance rastú."
+        },
+        {
+          "sectorId": "manufacturing",
+          "label": "Manufacturing",
+          "score": 38,
+          "direction": "mixed_to_down",
+          "colorHint": "red",
+          "aiExposure": "high",
+          "notes": "Robotika a automatizácia znižujú potrebu manuálnych operátorov, zvyšujú dopyt po technikoch/inžinieroch."
+        },
+        {
+          "sectorId": "retail",
+          "label": "Retail",
+          "score": 42,
+          "direction": "down",
+          "colorHint": "yellow",
+          "aiExposure": "high",
+          "notes": "Self-checkout, e-commerce a chatboty znižujú potrebu tradičných pokladníkov a supportu."
+        },
+        {
+          "sectorId": "education",
+          "label": "Education",
+          "score": 65,
+          "direction": "up",
+          "colorHint": "green",
+          "aiExposure": "medium",
+          "notes": "Rast dopytu po učiteľoch a tréningoch (lifelong learning); AI ako tutoring nástroj, nie náhrada."
+        }
+      ]
+    }
+  },
+
+  "lists": {
+    "decliningPositions": {
+      "title": "Declining Positions",
+      "description": "Roles with high automation exposure and expected net decline in headcount to 2030.",
+      "items": [
+        {
+          "name": "Copywriting (basic / templated)",
+          "sector": "Media & Marketing",
+          "riskLevel": "high",
+          "primaryAutomationDrivers": [
+            "Generative AI text tools",
+            "Template-based content marketing platforms"
+          ]
+        },
+        {
+          "name": "Data Entry Clerk",
+          "sector": "Back-office",
+          "riskLevel": "very_high",
+          "primaryAutomationDrivers": [
+            "OCR + workflow automation",
+            "AI document processing"
+          ]
+        },
+        {
+          "name": "Basic Accounting / Bookkeeping Clerk",
+          "sector": "Finance",
+          "riskLevel": "high",
+          "primaryAutomationDrivers": [
+            "Cloud accounting software",
+            "Automated reconciliations and tax filing"
+          ]
+        },
+        {
+          "name": "Customer Service (scripted, tier-1)",
+          "sector": "Retail & Services",
+          "riskLevel": "high",
+          "primaryAutomationDrivers": [
+            "Chatbots a voicebots",
+            "Self-service portals"
+          ]
+        }
+      ]
+    },
+    "growingPositions": {
+      "title": "Growing Positions",
+      "description": "Roles where demand is expected to grow because they design, supervise or complement AI systems.",
+      "items": [
+        {
+          "name": "AI Trainer / Data Labeling Lead",
+          "sector": "IT & Tech",
+          "growthLevel": "very_high",
+          "coreSkills": [
+            "Data quality & annotation",
+            "Domain knowledge",
+            "Prompt / evaluation design"
+          ]
+        },
+        {
+          "name": "Prompt Engineer / LLM Application Engineer",
+          "sector": "IT & Tech",
+          "growthLevel": "very_high",
+          "coreSkills": [
+            "Prompting & orchestration",
+            "Software engineering",
+            "System design & safety"
+          ]
+        },
+        {
+          "name": "Data Scientist / ML Engineer",
+          "sector": "IT & Tech / Cross-sector",
+          "growthLevel": "high",
+          "coreSkills": [
+            "Statistics & ML",
+            "MLOps & data pipelines",
+            "Experimentation and evals"
+          ]
+        },
+        {
+          "name": "Cybersecurity Specialist",
+          "sector": "IT & Tech / Critical Infrastructure",
+          "growthLevel": "high",
+          "coreSkills": [
+            "Threat modelling",
+            "Security engineering",
+            "Incident response"
+          ]
+        }
+      ]
+    }
+  }
+}
