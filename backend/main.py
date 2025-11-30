@@ -1,15 +1,10 @@
 import asyncio
 import json
 import re
-import tempfile
-import os
-import subprocess
-import traceback
-from contextlib import asynccontextmanager
-from typing import List, Dict, Any, Union, Literal, Optional
+from typing import List, Union, Literal
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field, field_validator, ValidationError
+from pydantic import BaseModel, Field, ValidationError
 import uvicorn
 from langchain_openai import ChatOpenAI
 from langchain.agents import create_agent
@@ -24,6 +19,7 @@ from prompts import (
     CAREER_RECOMMENDATIONS_SYSTEM_PROMPT,
     ROADMAP_GENERATION_PROMPT
 )
+from dotenv import load_dotenv
 
 load_dotenv()
 
