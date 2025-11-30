@@ -75,7 +75,7 @@ export default function FutureScenarios() {
   return (
     <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl p-6">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-white mb-2">Future Scenarios</h2>
+        <h2 className="text-2xl font-bold text-white mb-2">Scenarios</h2>
         <p className="text-sm text-zinc-400">
           Potential evolution paths for your profession over the next 5-10 years
         </p>

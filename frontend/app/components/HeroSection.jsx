@@ -12,7 +12,7 @@ import {
   Stethoscope,
   TrendingUp,
   Loader2,
-  Brain
+  Brain,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -47,69 +47,69 @@ export default function HeroSection() {
     "Marketers?",
   ];
 
- useEffect(() => {
-   // Ak používateľ píše do inputu, nezobrazuj rotáciu
-   if (profession.trim().length > 0) {
-     return;
-   }
+  useEffect(() => {
+    // Ak používateľ píše do inputu, nezobrazuj rotáciu
+    if (profession.trim().length > 0) {
+      return;
+    }
 
-   const currentJob = jobsToRotate[currentJobIndex];
-   const typingSpeed = isDeleting ? 50 : 150;
-   const pauseTime = 2000;
+    const currentJob = jobsToRotate[currentJobIndex];
+    const typingSpeed = isDeleting ? 50 : 150;
+    const pauseTime = 2000;
 
-   const timeout = setTimeout(() => {
-     if (!isDeleting) {
-       if (displayedText.length < currentJob.length) {
-         setDisplayedText(currentJob.slice(0, displayedText.length + 1));
-       } else {
-         setTimeout(() => setIsDeleting(true), pauseTime);
-       }
-     } else {
-       if (displayedText.length > 0) {
-         setDisplayedText(currentJob.slice(0, displayedText.length - 1));
-       } else {
-         setIsDeleting(false);
-         setCurrentJobIndex((prev) => (prev + 1) % jobsToRotate.length);
-       }
-     }
-   }, typingSpeed);
+    const timeout = setTimeout(() => {
+      if (!isDeleting) {
+        if (displayedText.length < currentJob.length) {
+          setDisplayedText(currentJob.slice(0, displayedText.length + 1));
+        } else {
+          setTimeout(() => setIsDeleting(true), pauseTime);
+        }
+      } else {
+        if (displayedText.length > 0) {
+          setDisplayedText(currentJob.slice(0, displayedText.length - 1));
+        } else {
+          setIsDeleting(false);
+          setCurrentJobIndex((prev) => (prev + 1) % jobsToRotate.length);
+        }
+      }
+    }, typingSpeed);
 
-   return () => clearTimeout(timeout);
- }, [displayedText, isDeleting, currentJobIndex, profession]);
+    return () => clearTimeout(timeout);
+  }, [displayedText, isDeleting, currentJobIndex, profession]);
 
- const thinkingComments = [
-   "Asking the AI overlords for permission...",
-   "Checking if robots can do your paperwork...",
-   "Calculating your coffee budget...",
-   "Consulting the digital crystal ball...",
-   "Teaching the algorithm to be nice...",
-   "Scanning for Terminators...",
-   "Measuring your human charm...",
-   "Reading your career horoscope...",
-   "Convincing the computer you're busy...",
-   "Almost done, just one more byte...",
- ];
+  const thinkingComments = [
+    "Asking the AI overlords for permission...",
+    "Checking if robots can do your paperwork...",
+    "Calculating your coffee budget...",
+    "Consulting the digital crystal ball...",
+    "Teaching the algorithm to be nice...",
+    "Scanning for Terminators...",
+    "Measuring your human charm...",
+    "Reading your career horoscope...",
+    "Convincing the computer you're busy...",
+    "Almost done, just one more byte...",
+  ];
 
- // Rotate through thinking comments
- useEffect(() => {
-   if (!isAnalyzing) return;
+  // Rotate through thinking comments
+  useEffect(() => {
+    if (!isAnalyzing) return;
 
-   const interval = setInterval(() => {
-     setCurrentCommentIndex((prev) => (prev + 1) % thinkingComments.length);
-   }, 6000);
+    const interval = setInterval(() => {
+      setCurrentCommentIndex((prev) => (prev + 1) % thinkingComments.length);
+    }, 6000);
 
-   return () => clearInterval(interval);
- }, [isAnalyzing]);
+    return () => clearInterval(interval);
+  }, [isAnalyzing]);
 
- // Animated dots
- const [dots, setDots] = useState("");
- useEffect(() => {
-   if (!isAnalyzing) return;
-   const interval = setInterval(() => {
-     setDots((prev) => (prev.length >= 3 ? "" : prev + "."));
-   }, 500);
-   return () => clearInterval(interval);
- }, [isAnalyzing]);
+  // Animated dots
+  const [dots, setDots] = useState("");
+  useEffect(() => {
+    if (!isAnalyzing) return;
+    const interval = setInterval(() => {
+      setDots((prev) => (prev.length >= 3 ? "" : prev + "."));
+    }, 500);
+    return () => clearInterval(interval);
+  }, [isAnalyzing]);
 
   const handleAnalyze = async () => {
     try {
@@ -391,7 +391,7 @@ export default function HeroSection() {
                               gender: e.target.value,
                             })
                           }
-                          placeholder="e.g., muž, žena, neuvedené"
+                          placeholder="e.g., Man, Woman, Non-binary"
                           className="w-full bg-white/5 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-white/20 transition-all"
                         />
                       </div>
@@ -486,7 +486,7 @@ export default function HeroSection() {
                               education: e.target.value,
                             })
                           }
-                          placeholder="e.g., Univerzita Komenského, Computer Science"
+                          placeholder="e.g., Comenius University, Computer Science"
                           className="w-full bg-white/5 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-white/20 transition-all"
                         />
                       </div>

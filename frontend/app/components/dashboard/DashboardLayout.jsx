@@ -55,10 +55,8 @@ export default function DashboardLayout({
           {/* Logo */}
           <div className="flex items-center justify-between mb-8">
             <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
-                <Home className="w-5 h-5" />
-              </div>
-              <span className="text-xl font-bold">AI Career</span>
+              <Home className="w-5 h-5" />
+              <span className="text-xl font-bold">Home</span>
             </Link>
             <button
               onClick={() => setSidebarOpen(false)}

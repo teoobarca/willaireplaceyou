@@ -56,7 +56,7 @@ function AnimatedNumber({ value, duration = 2, delay = 0, suffix = "" }) {
           requestAnimationFrame(animate);
         }
       },
-      { threshold: 0.3 }
+      { threshold: 0.3 },
     );
 
     if (ref.current) {
@@ -137,7 +137,7 @@ function WhyItExists() {
               stat: "85M",
               description: "jobs displaced by automation by 2025",
               icon: TrendingUp,
-              accent: "from-blue-500 to-cyan-500",
+              accent: "from-green-500 to-green-500",
             },
             {
               stat: "97M",
@@ -196,7 +196,6 @@ function WhyItExists() {
     </section>
   );
 }
-
 
 // ============ RESULT PREVIEW ============
 function ResultPreview() {
@@ -561,19 +560,19 @@ function HowItWorks() {
               const opacity = useTransform(
                 scrollYProgress,
                 [start, start + 0.1, end - 0.1, end],
-                [0, 1, 1, 0]
+                [0, 1, 1, 0],
               );
 
               const x = useTransform(
                 scrollYProgress,
                 [start, mid, end],
-                [100, 0, -100]
+                [100, 0, -100],
               );
 
               const scale = useTransform(
                 scrollYProgress,
                 [start, mid, end],
-                [0.8, 1, 0.8]
+                [0.8, 1, 0.8],
               );
 
               return (
@@ -636,19 +635,19 @@ function HowItWorks() {
               const opacity = useTransform(
                 scrollYProgress,
                 [start, start + 0.1, end - 0.1, end],
-                [0, 1, 1, 0]
+                [0, 1, 1, 0],
               );
 
               const x = useTransform(
                 scrollYProgress,
                 [start, mid, end],
-                [100, 0, -100]
+                [100, 0, -100],
               );
 
               const scale = useTransform(
                 scrollYProgress,
                 [start, mid, end],
-                [0.8, 1, 0.8]
+                [0.8, 1, 0.8],
               );
 
               const isEven = index % 2 === 0;
@@ -661,8 +660,9 @@ function HowItWorks() {
                     x: isEven ? x : useTransform(x, (val) => -val),
                     scale,
                   }}
-                  className={`absolute ${isEven ? "left-[55%]" : "right-[55%]"
-                    } top-1/2 -translate-y-1/2 w-[400px]`}
+                  className={`absolute ${
+                    isEven ? "left-[55%]" : "right-[55%]"
+                  } top-1/2 -translate-y-1/2 w-[400px]`}
                 >
                   <div className="relative group">
                     <div className="absolute -inset-1 bg-gradient-to-r from-purple-600/20 to-blue-600/20 rounded-2xl blur-xl opacity-30 group-hover:opacity-60 transition duration-1000"></div>
@@ -685,12 +685,14 @@ function HowItWorks() {
 
                   {/* Connector Line - Desktop */}
                   <div
-                    className={`absolute top-1/2 ${isEven ? "-left-12" : "-right-12"
-                      } w-12 h-[1px] bg-white/20 -translate-y-1/2`}
+                    className={`absolute top-1/2 ${
+                      isEven ? "-left-12" : "-right-12"
+                    } w-12 h-[1px] bg-white/20 -translate-y-1/2`}
                   />
                   <div
-                    className={`absolute top-1/2 ${isEven ? "-left-1.5" : "-right-1.5"
-                      } w-3 h-3 rounded-full bg-white/30 backdrop-blur-sm -translate-y-1/2 border border-white/40`}
+                    className={`absolute top-1/2 ${
+                      isEven ? "-left-1.5" : "-right-1.5"
+                    } w-3 h-3 rounded-full bg-white/30 backdrop-blur-sm -translate-y-1/2 border border-white/40`}
                   />
                 </motion.div>
               );

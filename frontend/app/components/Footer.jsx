@@ -172,7 +172,7 @@ export default function Footer() {
         >
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-zinc-500">
             <p>
-              &copy; {new Date().getFullYear()} Unreplaceable.ai. Built with{" "}
+              &copy; {new Date().getFullYear()} willaireplace.you. Built with{" "}
               <span className="text-purple-400">AIove</span> for the future.
             </p>
             <div className="flex gap-6 text-xs">

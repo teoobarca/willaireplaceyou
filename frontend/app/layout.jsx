@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Will AI Replace You ?",
+  title: "Will AI Replace You",
   description:
     "Discover your career's future in the age of artificial intelligence. We analyze risks and reveal the skills you need to become irreplaceable.",
 };
