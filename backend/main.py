@@ -210,6 +210,10 @@ async def evaluate_automation_potential(item: Union[Task, Skill],
 
 @app.post("/analyze")
 async def analyze_profile(profile: UserProfile):
+    print("\n=== INCOMING REQUEST PROFILE ===")
+    print(profile.model_dump_json(indent=2))
+    print("================================\n")
+
     job_context = f"""Age: {profile.age}
 Gender: {profile.gender}
 Job Title: {profile.job_title}
@@ -258,7 +262,9 @@ Education: {profile.education}"""
         tasks: List[Task] = result_tasks["structured_response"].tasks
         skills: List[Skill] = result_skills["structured_response"].skills
     except (ValidationError, Exception) as e:
-        print("⚠️ Input validation failed (likely invalid/short content). Returning 400.")
+        print(f"⚠️ Input validation failed (likely invalid/short content). Error: {e}")
+        import traceback
+        traceback.print_exc()
         raise HTTPException(
             status_code=400,
             detail={
@@ -385,4 +391,4 @@ Education: {profile.education}"""
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, log_level="debug", workers=8)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, log_level="debug", workers=8, reload=True)

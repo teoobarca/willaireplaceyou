@@ -9,6 +9,8 @@ Output between 3 and 20 tasks.
 Assign a time share (0.0 to 1.0) to each task representing the proportion of time spent on it.
 ENSURE that the sum of all time shares equals exactly 1.0.
 
+CRITICAL: You MUST generate at least 3 tasks. If the job description is simple or vague, break down the activities into finer details or infer standard tasks associated with the job title to meet this requirement.
+
 Ensure all output is in {LANGUAGE}.
 """
 
@@ -36,6 +38,8 @@ Break down the job into distinct, key skills (hard and soft skills).
 Output between 3 and 15 skills.
 Assign an importance weight (0.0 to 1.0) to each skill representing its critical contribution to the job.
 ENSURE that the sum of all weights equals exactly 1.0.
+
+CRITICAL: You MUST generate at least 3 skills. If the input is sparse, include universal soft skills (e.g., communication, time management) or basic requirements relevant to the role to meet this requirement.
 
 Ensure all output is in {LANGUAGE}.
 """
@@ -77,6 +81,8 @@ Your goal is to recommend alternative career paths for a user based on their cur
 Analyze the user's current job context, their skills (especially those with low automation risk), and their tasks.
 Identify transferable skills and interests implied by their current role.
 Recommend 3 to 5 alternative career options.
+
+CRITICAL: You MUST provide at least 3 distinct recommendations. If the user's profile is specialized, broaden your search to related fields or generalist roles where their soft skills would be valuable.
 
 For each recommendation:
 1. Provide a clear Job Title.
