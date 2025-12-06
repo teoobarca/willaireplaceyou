@@ -1,5 +1,5 @@
 import { Analytics } from "@vercel/analytics/next";
-import { GoogleAnalytics } from "nextjs-google-analytics";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import LenisProvider from "./components/lenisProvider";
@@ -20,23 +20,17 @@ export const metadata = {
     "Discover your career's future in the age of artificial intelligence. We analyze risks and reveal the skills you need to become irreplaceable.",
 };
 
-const GA_MEASUREMENT_ID =
-  process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "G-3KVB89TV8S";
-
 export default function RootLayout({ children }) {
   return (
     <LenisProvider>
       <html lang="en">
+        <Analytics />
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          <GoogleAnalytics
-            gaMeasurementId={GA_MEASUREMENT_ID}
-            trackPageViews
-          />
-          <Analytics />
           {children}
         </body>
+        <GoogleAnalytics gaId="G-3KVB89TV8S" />
       </html>
     </LenisProvider>
   );
